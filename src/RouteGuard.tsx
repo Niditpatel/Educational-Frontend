@@ -15,7 +15,7 @@ export function RouteGuard({ children }: Props): any {
 
 export function RouteAdminGuard({ children }: Props): any {
   const User: any = sessionStorage.getItem("User");
-  if (JSON.parse(User).role === 0) {
+  if (JSON.parse(User).role === "SuperAdmin") {
     return children;
-  } else return false;
+  } else return <Navigate to={"/"}></Navigate>;
 }

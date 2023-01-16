@@ -6,13 +6,15 @@ import Fallback from "./components/common/Fallback";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { RouteGuard } from "./RouteGuard";
+import VerifyAccount from "./components/VerifyAccount";
+import ActiveAccount from "./components/ActiveAccount/Index";
 const LandingPage = lazy(() => import("./components/Landingpage/LandingPage"));
 const LandingPageContent = lazy(
   () => import("./components/Landingpage/LandingPageContant")
 );
 const Login = lazy(() => import("./components/Login/Login"));
 const Signup = lazy(() => import("./components/Signup/signup"));
-const ResetPassword = lazy(() => import("./components/common/ResetPassowrd"));
+const ResetPassword = lazy(() => import("./components/common/ResetPassword/ResetPassowrd"));
 const ForgotPassword = lazy(() => import("./components/common/ForgotPassword"));
 const Administration = lazy(() => import("./components/Admin/Adminitration"));
 const Class = lazy(() => import("./components/Class/Class"));
@@ -116,6 +118,22 @@ root.render(
               </Suspense>
             }
           ></Route>
+          <Route
+            path="/verifyaccount/:token"
+            element={
+              <Suspense fallback={<Fallback />}>
+                <VerifyAccount />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/activeaccount/:token"
+            element={
+              <Suspense fallback={<Fallback />}>
+                <ActiveAccount />
+              </Suspense>
+            }
+          />
         </Route>
       </Route>
     </Routes>

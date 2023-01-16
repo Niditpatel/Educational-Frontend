@@ -1,11 +1,11 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import PasswordField from "./Fields/PasswordField";
+import PasswordField from "../Fields/PasswordField";
 import { useState } from "react";
-import { ResetPassword as ResetPasswordService } from "../../AuthService";
-import { ResetPasswordSchema } from "../models/ResetPasswordModel";
+import { ResetPassword as ResetPasswordService } from "../../../AuthService";
+import { ResetPasswordSchema } from "../../models/ResetPasswordModel";
 import { AiOutlineWarning } from "react-icons/ai";
-import resetpassword from "../../Images/resetpassword.jpg";
+import resetpassword from "../../../Images/resetpassword.jpg";
 export default function ResetPassword() {
   const [APIerror, setAPIerror] = useState("");
   const [APIsuccess, setAPIsuccess] = useState("");
