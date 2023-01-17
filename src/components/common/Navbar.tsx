@@ -1,11 +1,34 @@
 import point from "../../Images/point.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "tw-elements";
 import { AiOutlineMenu } from "react-icons/ai";
+import { useContext } from "react";
+import { contextLogUser } from "../Login/LogUserContext";
+import { IoExitOutline } from "react-icons/io5";
+import { useEffect, useState } from "react";
+import { AiOutlineUser } from "react-icons/ai";
+
 export default function Navbar() {
+  const [LoggedUser, setLoggedUser] = useState<any>();
+
+  const logUser = useContext(contextLogUser);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const user: any = sessionStorage.getItem("User");
+    const logUser = user !== null ? JSON.parse(user) : user;
+    setLoggedUser(logUser);
+  }, [logUser]);
+
+  function handleLogout() {
+    sessionStorage.clear();
+    setLoggedUser(null);
+    navigate("/");
+  }
+
   return (
     <div className="border-b  bg-primary">
-      <nav className="relative w-full flex flex-wrap  items-center justify-between  text-white navbar navbar-expand-xl  ">
+      <nav className="relative w-full flex flex-wrap  items-center justify-between  text-white navbar navbar-expand-2xl  ">
         <div className="container w-full  flex flex-wrap items-center justify-between px-6 ">
           <Link to={"/"}>
             <div className="flex">
@@ -57,19 +80,63 @@ export default function Navbar() {
                 <Link to="#">partners</Link>
               </div>
               <div className="nav-item  h-full">
-                <div className="capitalize text-light2 flex space-x-2 items-center  py-2 skew-x-[20deg]  xl:px-5 xl:text-primary xl:bg-light2">
-                  <div className="-skew-x-[20deg]">
-                    <Link to="/login" className="hover:text-light1">
-                      login
-                    </Link>
+                {LoggedUser === null && (
+                  <div className="capitalize text-light2 flex space-x-2 items-center  py-2 skew-x-[20deg]  xl:px-5 xl:text-primary xl:bg-light2">
+                    <div className="-skew-x-[20deg]">
+                      <Link to="/login" className="hover:text-light1">
+                        login
+                      </Link>
+                    </div>
+                    <span className="-skew-x-[20deg]">or</span>
+                    <div className="-skew-x-[20deg]">
+                      <Link to="/signup" className="hover:text-light1">
+                        register{" "}
+                      </Link>
+                    </div>
                   </div>
-                  <span className="-skew-x-[20deg]">or</span>
-                  <div className="-skew-x-[20deg]">
-                    <Link to="/signup" className="hover:text-light1">
-                      ragister{" "}
-                    </Link>
+                )}
+                {LoggedUser && (
+                  <div className="capitalize text-light2 h-full w-full   skew-x-[20deg]  xl:px-5 xl:text-primary xl:bg-light2">
+                    <div className="-skew-x-[20deg] flex   space-x-2">
+                      <div>
+                        <div className="dropdown relative">
+                          <button
+                            className="dropdown-toggle  py-2.5 flex items-center whitespace-nowrap"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                          >
+                            {LoggedUser.firstName} {LoggedUser.lastName} &#9662;
+                          </button>
+                          <ul className=" dropdown-menu border w-full min-w-max absolute hidden z-50 float-left py-2 text-left rounded text-light2 bg-primary xl:text-primary xl:bg-light2  mt-1 m-0">
+                            <li>
+                              <button
+                                className=" dropdown-item px-4 flex items-center space-x-2 "
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                }}
+                              >
+                                <AiOutlineUser />
+                                <span>Profile</span>
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                className=" dropdown-item px-4 flex items-center space-x-2 "
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  handleLogout();
+                                }}
+                              >
+                                <IoExitOutline />
+                                <span> log out</span>
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>

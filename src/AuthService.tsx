@@ -59,7 +59,7 @@ export async function ActivateAccount(token: any) {
 
 export async function RegenerateLink(data: any) {
   try {
-    const res = await axios.put<any>(API_URL + "active", data);
+    const res = await axios.put<any>(API_URL + "regeneratetoken", data);
     return res.data;
   } catch (error: any) {
     return error.response.data;

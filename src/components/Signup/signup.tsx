@@ -10,7 +10,7 @@ import {
   GetInstitutes as GetInstitutesService,
 } from "../../GetDataService";
 import { Signup as SingupService } from "../../AuthService";
-import { SignupDetailSchema } from "../models/SingupModel";
+import { SignupDetailSchema } from "../../models/SingupModel";
 import { Link } from "react-router-dom";
 import CheckboxField from "../common/Fields/CheckboxField";
 import singup from "../../Images/singup.jpg";
@@ -36,8 +36,10 @@ export default function Signup() {
     });
     if (res.success === 0) {
       setAPIerror(res.message);
+      methods.reset();
     } else {
       setAPIsuccess(res.message);
+      methods.reset();
     }
   };
 
@@ -69,90 +71,96 @@ export default function Signup() {
             className="h-96 w-96  mx-auto lg:h-[615px] lg:w-full"
           />
         </div>
-        <FormProvider {...methods}>
-          <form
-            onSubmit={methods.handleSubmit(onSubmit)}
-            className="p-5  basis-1/2"
-          >
-            <div className="  mx-auto py-2 mt-8 max-w-[420px]  ">
-              <div className="text-3xl text-center">sign up</div>
-              {APIerror.length > 0 && (
-                <div className="text-xl text-secondary flex bg-warning rounded p-2 my-2">
-                  <AiOutlineWarning className="text-3xl" /> {APIerror} try again
-                </div>
-              )}
-              {APIsuccess.length > 0 && (
-                <div className="text-xl text-secondary flex bg-success rounded p-2 my-2">
-                  <AiOutlineWarning className="text-3xl" /> {APIsuccess}
-                </div>
-              )}
-              <AsyncSingleSelect
-                placeholder="Search Institute"
-                fieldname="institute"
-                loadOptions={selectInstitute}
-                required={true}
-              />
-              <TextField
-                label="Email"
-                fieldname="email"
-                type="email"
-                required={true}
-              />
-              <SingleSelect
-                fieldname="title"
-                placeholder="Select Title"
-                options={Titles}
-                required={true}
-              />
-              <TextField
-                label="First Name"
-                fieldname="firstName"
-                required={true}
-              />
-              <TextField
-                label="Last Name"
-                fieldname="lastName"
-                required={true}
-              />
-              <PasswordField label="Password" fieldname="password" />
-              <PasswordField
-                label="Confirm Password"
-                fieldname="confirmPassword"
-              />
-              <CheckboxField label="hello" fieldname="terms">
-                <label className="text-sm ">
-                  I agree to OneEducation's{" "}
-                  <Link className="text-secondary" to={"#"}>
-                    Terms and Conditions
-                  </Link>{" "}
-                  and{" "}
-                  <Link className="text-secondary" to={"#"}>
-                    Privacy Policy
-                  </Link>
-                </label>
-              </CheckboxField>
-              <div className="mt-6">
-                <button
-                  type="submit"
-                  className={`px-10  font-semibold border border-light1 text-lg  rounded-xl text-center subpixel-antialiased 
-              ${methods.formState.isValid ? "text-primary" : "text-light1"}`}
-                  // disabled={!methods.formState.isValid}
-                >
-                  Register
-                </button>
-              </div>
-              <div>
-                <small className="capitalize ">
-                  {" "}
-                  already have account?{" "}
-                  <Link to="/login" className="text-secondary">
-                    login
-                  </Link>
-                </small>
-              </div>
+        {APIerror.length > 0 && (
+          <div className="flex justify-center  items-center basis-1/2 ">
+            <div className="text-xl h-fit  text-secondary flex bg-warning rounded p-2 my-2">
+              <AiOutlineWarning className="text-3xl" /> {APIerror}
             </div>
-          </form>
-        </FormProvider>
+          </div>
+        )}
+        {APIsuccess.length > 0 && (
+          <div className="flex justify-center  items-center basis-1/2 ">
+            <div className="text-xl h-fit  text-secondary flex bg-success rounded p-2 my-2">
+              <AiOutlineWarning className="text-3xl" /> {APIsuccess}
+            </div>
+          </div>
+        )}
+        {APIsuccess.length === 0 && APIerror.length === 0 && (
+          <FormProvider {...methods}>
+            <form
+              onSubmit={methods.handleSubmit(onSubmit)}
+              className="p-5  basis-1/2"
+            >
+              <div className="  mx-auto py-2 mt-8 max-w-[420px]  ">
+                <div className="text-3xl text-center">sign up</div>
+                <AsyncSingleSelect
+                  placeholder="Search Institute"
+                  fieldname="institute"
+                  loadOptions={selectInstitute}
+                  required={true}
+                />
+                <TextField
+                  label="Email"
+                  fieldname="email"
+                  type="email"
+                  required={true}
+                />
+                <SingleSelect
+                  fieldname="title"
+                  placeholder="Select Title"
+                  options={Titles}
+                  required={true}
+                />
+                <TextField
+                  label="First Name"
+                  fieldname="firstName"
+                  required={true}
+                />
+                <TextField
+                  label="Last Name"
+                  fieldname="lastName"
+                  required={true}
+                />
+                <PasswordField label="Password" fieldname="password" />
+                <PasswordField
+                  label="Confirm Password"
+                  fieldname="confirmPassword"
+                />
+                <CheckboxField label="hello" fieldname="terms">
+                  <label className="text-sm ">
+                    I agree to OneEducation's{" "}
+                    <Link className="text-secondary" to={"#"}>
+                      Terms and Conditions
+                    </Link>{" "}
+                    and{" "}
+                    <Link className="text-secondary" to={"#"}>
+                      Privacy Policy
+                    </Link>
+                  </label>
+                </CheckboxField>
+                <div className="mt-6">
+                  <button
+                    type="submit"
+                    className={`px-10  font-semibold border border-light1 text-lg  rounded-xl text-center subpixel-antialiased 
+              ${methods.formState.isValid ? "text-primary" : "text-light1"}`}
+                    // disabled={!methods.formState.isValid}
+                  >
+                    Register
+                  </button>
+                </div>
+                <div>
+                  <small className="capitalize ">
+                    {" "}
+                    already have account?{" "}
+                    <Link to="/login" className="text-secondary">
+                      login
+                    </Link>
+                  </small>
+                </div>
+              </div>
+            </form>
+          </FormProvider>
+        )}
       </div>
     </div>
   );

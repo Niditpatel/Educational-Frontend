@@ -7,8 +7,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import TextField from "../common/Fields/TextField";
 import PasswordField from "../common/Fields/PasswordField";
 import login from "../../Images/login.jpg";
-import { LoginDetailSchema } from "../models/LoginModel";
+import { LoginDetailSchema } from "../../models/LoginModel";
 import { useNavigate } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 
 export default function Login() {
   const [APIerror, setAPIerror] = useState();
@@ -17,6 +18,7 @@ export default function Login() {
     mode: "onChange",
     resolver: yupResolver(LoginDetailSchema),
   });
+  let { setLoguser } = useOutletContext<any>();
 
   const onSubmit = async (data: any) => {
     console.log(process.env.REACT_APP_API_URL);
@@ -25,8 +27,11 @@ export default function Login() {
       sessionStorage.setItem("Access", res.token);
       sessionStorage.setItem("User", JSON.stringify(res.LOGuser));
       navigate("/admin");
+      setLoguser(res.LOGuser);
+      methods.reset();
     } else {
       setAPIerror(res.message);
+      methods.reset();
     }
   };
   return (
@@ -48,9 +53,9 @@ export default function Login() {
               <div className="text-3xl text-center">Login</div>
               {/* error from apis */}
               {APIerror && (
-                <div className="text-xl text-secondary flex space-x-4 bg-warning rounded py-2 my-2 px-2">
+                <div className="text-xl text-secondary flex space-x-4 items-center bg-warning rounded py-2 my-2 px-2">
                   <AiOutlineWarning className="text-5xl" />{" "}
-                  <span>{APIerror} try again</span>
+                  <span>{APIerror} </span>
                 </div>
               )}
               <TextField
@@ -68,7 +73,6 @@ export default function Login() {
                   type="submit"
                   className={`px-10  font-semibold border border-light1 text-lg  rounded-xl text-center subpixel-antialiased 
               ${methods.formState.isValid ? "text-primary" : "text-light1"}`}
-                  // disabled={!methods.formState.isValid}
                 >
                   Login
                 </button>

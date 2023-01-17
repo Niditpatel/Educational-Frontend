@@ -6,7 +6,7 @@ module.exports = {
     screens: {
       sm: '420px',
       md: '768px',
-      lg: '976px',
+      lg: '1024px',
       xl: '1440px',
     },
     container: {
@@ -21,7 +21,7 @@ module.exports = {
       "black": '#000',
       "warning": '#daa544f1',
       "danger": '#eb5122e1',
-      "success":'#60a55e'
+      "success": '#60a55e'
     },
     extend: {},
   },

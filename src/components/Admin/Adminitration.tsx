@@ -18,7 +18,8 @@ export default function Administration() {
           <div className="container text-primary">
             <div className="text-primary capitalize">administration</div>
             <div className="grid grid-cols-2 md:grid-cols-4">
-              {(LogUser.role === 0 || LogUser.role === 1) && (
+              {(LogUser.role === "SuperAdmin" ||
+                LogUser.role === "SchoolAdmin") && (
                 <div className="">
                   <div className="text-6xl w-fit h-fit mx-auto text-light2   lg:text-7xl xl:text-9xl  ">
                     <FaUserClock />
@@ -28,7 +29,7 @@ export default function Administration() {
                   </div>
                 </div>
               )}
-              {LogUser.role === 0 && (
+              {LogUser.role === "SuperAdmin" && (
                 <div className="">
                   <div className="text-6xl w-fit h-fit mx-auto text-light2   lg:text-7xl xl:text-9xl  ">
                     <FaSchool />
@@ -38,9 +39,9 @@ export default function Administration() {
                   </div>
                 </div>
               )}
-              {(LogUser.role === 0 ||
-                LogUser.role === 1 ||
-                LogUser.role === 2) && (
+              {(LogUser.role === "SuperAdmin" ||
+                LogUser.role === "SchoolAdmin" ||
+                LogUser.role === "Teacher") && (
                 <div className="">
                   <div className="text-6xl w-fit h-fit mx-auto text-light2   lg:text-7xl xl:text-9xl  ">
                     <BsFillDisplayFill />
@@ -50,9 +51,9 @@ export default function Administration() {
                   </div>
                 </div>
               )}
-              {(LogUser.role === 0 ||
-                LogUser.role === 1 ||
-                LogUser.role === 2) && (
+              {(LogUser.role === "SuperAdmin" ||
+                LogUser.role === "SchoolAdmin" ||
+                LogUser.role === "Teacher") && (
                 <div className="">
                   <div className="text-6xl w-fit h-fit mx-auto text-light2 lg:text-7xl xl:text-9xl  ">
                     <ImBooks />

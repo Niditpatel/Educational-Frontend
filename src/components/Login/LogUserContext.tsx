@@ -5,10 +5,9 @@ export interface LogUserDetail {
   firstName: String;
   lastName: String;
   title: String;
-  role: Number;
+  role: String;
   institute: String;
 }
 
 export const contextLogUser = createContext<LogUserDetail | null>(null);
 export const LogUserContextProvider = contextLogUser.Provider;
-export const LogUserContextConsumer = contextLogUser.Consumer;

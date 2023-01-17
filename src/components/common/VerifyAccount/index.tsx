@@ -1,6 +1,6 @@
-import { VerifyAccount as VerifyAccountService } from "../../AuthService";
+import { VerifyAccount as VerifyAccountService } from "../../../AuthService";
 import { useParams } from "react-router-dom";
-import verifyemail from "../../Images/verifyemail.jpg";
+import verifyemail from "../../../Images/verifyemail.jpg";
 import { useState } from "react";
 export default function VerifyAccount() {
   const [APIerror, setAPIerror] = useState("");

@@ -6,21 +6,27 @@ import Fallback from "./components/common/Fallback";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { RouteGuard } from "./RouteGuard";
-import VerifyAccount from "./components/VerifyAccount";
-import ActiveAccount from "./components/ActiveAccount/Index";
+import ErrorPage from "./components/common/ErrorPage/ErrorPage";
 const LandingPage = lazy(() => import("./components/Landingpage/LandingPage"));
 const LandingPageContent = lazy(
   () => import("./components/Landingpage/LandingPageContant")
 );
 const Login = lazy(() => import("./components/Login/Login"));
 const Signup = lazy(() => import("./components/Signup/signup"));
-const ResetPassword = lazy(() => import("./components/common/ResetPassword/ResetPassowrd"));
+
+const ResetPassword = lazy(
+  () => import("./components/common/ResetPassword/ResetPassowrd")
+);
 const ForgotPassword = lazy(() => import("./components/common/ForgotPassword"));
 const Administration = lazy(() => import("./components/Admin/Adminitration"));
 const Class = lazy(() => import("./components/Class/Class"));
 const Assets = lazy(() => import("./components/Assets/Assets"));
 const Institutes = lazy(() => import("./components/Institutes/Institutes"));
 const Users = lazy(() => import("./components/Users/users"));
+const ActiveAccount = lazy(
+  () => import("./components/common/ActiveAccount/Index")
+);
+const VerifyAccount = lazy(() => import("./components/common/VerifyAccount"));
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
@@ -69,7 +75,7 @@ root.render(
             }
           ></Route>
           <Route
-            path="/resetpassword"
+            path="/resetpassword/:token"
             element={
               <Suspense fallback={<Fallback />}>
                 <ResetPassword />
@@ -134,6 +140,7 @@ root.render(
               </Suspense>
             }
           />
+          <Route path="*" element={<ErrorPage />} />
         </Route>
       </Route>
     </Routes>

@@ -3,7 +3,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
 import { ForgotPassword as ForgotPasswordService } from "../../AuthService";
-import { ForgotPasswordSchema } from "../models/ForgotPasswordModel";
+import { ForgotPasswordSchema } from "../../models/ForgotPasswordModel";
 import { AiOutlineWarning } from "react-icons/ai";
 import forgotpassword from "../../Images/forgotpassword.jpg";
 import { Link } from "react-router-dom";
@@ -69,9 +69,8 @@ export default function ForgotPassword() {
                     type="submit"
                     className={`px-10  font-semibold border border-light1 text-lg  rounded-xl text-center subpixel-antialiased 
               ${methods.formState.isValid ? "text-primary" : "text-light1"}`}
-                    // disabled={!methods.formState.isValid}
                   >
-                    Login
+                    submit
                   </button>
                 </div>
                 <div className="">

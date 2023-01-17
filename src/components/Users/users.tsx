@@ -27,7 +27,7 @@ export default function Users() {
         <div className="border container px-2 text-primary">
           <div className="capitalize text-lg">Users</div>
           <FormProvider {...methods}>
-            <form action="">
+            <form action="" onSubmit={methods.handleSubmit(onSubmit)}>
               <div className=" mt-5 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
                 <div>
                   <label htmlFor="" className="capitalize">
@@ -38,7 +38,7 @@ export default function Users() {
                     type="text"
                     name=""
                     id=""
-                    className="border rounded light1-placeholder w-full p-3 max-w-[420px]"
+                    className="border rounded light1-placeholder w-full p-3.5 max-w-[420px] focus:outline-none"
                     placeholder="Search..."
                   />
                 </div>

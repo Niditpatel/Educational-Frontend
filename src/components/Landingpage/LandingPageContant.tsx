@@ -12,7 +12,7 @@ export default function LandingPageContent() {
           id="LandingPageCarousel"
           className="carousel slide relative"
           data-bs-ride="carousel"
-          data-bs-interval="5000"
+          data-bs-interval="2500"
         >
           <div className="carousel-inner relative w-full h-40 overflow-hidden">
             <div className="carousel-item active relative float-left w-full">
