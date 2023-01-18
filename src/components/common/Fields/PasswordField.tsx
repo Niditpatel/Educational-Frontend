@@ -19,28 +19,29 @@ export default function PasswordField({ fieldname, label, ...rest }: any) {
     <>
       <div className="flex mt-5 space-x-2">
         <div className="relative w-full">
-          <input
-            type={togglePasswordVisibility === 1 ? "text" : "password"}
-            className="block rounded px-2.5 pb-2.5 pt-5 w-full text-sm border appearance-none  focus:outline-none focus:ring-0  peer"
-            placeholder=" "
-            autoComplete="on"
-            {...registration}
-            {...rest}
-          />
-          <label className="absolute capitalize  duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] left-2.5   peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4">
-            {label}
-          </label>
+          <div className="form-floating w-full">
+            <input
+              type={togglePasswordVisibility === 1 ? "text" : "password"}
+              {...registration}
+              {...rest}
+              className="form-control  block rounded px-2.5 pb-2.5 pt-5 w-full text-sm border
+            transition ease-in-out m-0  focus:outline-none focus:ring-0"
+              placeholder={label}
+              autoComplete="on"
+            />
+            <label className="text-primary">{label}</label>
+          </div>
           <label
-            className="absolute text-lg right-1 z-1 bottom-2"
+            className="absolute text-lg right-1 z-1 bottom-2 "
             onClick={(e) => {
               e.preventDefault();
               HandlePasswordVisibilityToggle();
             }}
           >
             {togglePasswordVisibility === 0 ? (
-              <AiOutlineEye className="w-6 h-5" />
+              <AiOutlineEye className="w-7 h-6" />
             ) : (
-              <AiOutlineEyeInvisible className="w-6 h-5" />
+              <AiOutlineEyeInvisible className="w-7 h-6" />
             )}
           </label>
         </div>

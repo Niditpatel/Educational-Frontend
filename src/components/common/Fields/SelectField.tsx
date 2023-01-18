@@ -1,7 +1,14 @@
-import Select from "react-select";
+import Select, { components } from "react-select";
 import AsyncSelect from "react-select/async";
 import { Controller, useFormContext, useController } from "react-hook-form";
 import { forwardRef } from "react";
+import { BsArrowRight } from "react-icons/bs";
+
+const Control = ({ children, ...props }: any) => (
+  <components.Control {...props}>
+    Title <BsArrowRight className="ml-2" /> {children}
+  </components.Control>
+);
 
 const selectStyles = {
   menu: (provided: any) => ({
@@ -10,7 +17,7 @@ const selectStyles = {
   }),
   control: (baseStylese: any) => ({
     ...baseStylese,
-    padding: "8px 0px",
+    padding: "10px 12px",
     color: "#274472",
     outline: 0,
     border: "1 !important",
@@ -31,7 +38,7 @@ const selectStyles = {
 };
 
 const SingleSelect = forwardRef(
-  ({ fieldname, required, options, ...rest }: any, ref) => {
+  ({ fieldname, required, options, isSearchable, ...rest }: any, ref) => {
     const methods = useFormContext();
     const registration = methods.register(fieldname);
     const { fieldState } = useController({ name: fieldname });
@@ -45,9 +52,11 @@ const SingleSelect = forwardRef(
               {...registration}
               render={({ field }) => (
                 <Select
+                  isSearchable={isSearchable}
                   {...field}
                   options={options}
                   styles={selectStyles}
+                  components={{ Control }}
                   {...rest}
                 />
               )}
@@ -72,13 +81,15 @@ export function AsyncSingleSelect({
   options,
   required,
   loadOptions,
+  instituteDefaultOptions,
   ...rest
 }: any) {
   const methods = useFormContext();
   const registration = methods.register(fieldname);
   const { fieldState } = useController({ name: fieldname });
   let error = fieldState?.error;
-
+  const fieldsValue = methods.getValues(fieldname);
+  const defaultOptions = fieldsValue !== null ? instituteDefaultOptions : [];
   return (
     <>
       <div className="flex mt-5 w-full space-x-2">
@@ -89,11 +100,21 @@ export function AsyncSingleSelect({
             render={({ field }) => (
               <AsyncSelect
                 {...field}
+                cacheOptions
+                defaultOptions={defaultOptions}
+                isClearable
                 loadOptions={loadOptions}
                 getOptionValue={(option: any) => option.value}
                 getOptionLabel={(option: any) => option.label}
                 styles={selectStyles}
                 {...rest}
+                noOptionsMessage={({ inputValue }) =>
+                  !inputValue
+                    ? "Start Typing to Search Institutes"
+                    : inputValue.length > 2
+                    ? "No Institute Are Found Matching This Value"
+                    : "Type At Least Three Character to View Result"
+                }
               />
             )}
           />

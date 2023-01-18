@@ -1,7 +1,7 @@
 import { ActivateAccount as ActiveAccountService } from "../../../AuthService";
 import { useParams } from "react-router-dom";
 import setpassword from "../../../Images/setpassword.png";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import PasswordField from "../Fields/PasswordField";
@@ -27,11 +27,11 @@ export default function ActiveAccount() {
     setAPIerror("");
 
     const res = await RegenerateLinkService({
-      isFor: "activeaccount",
+      isFor: "activeAccount",
       token: params.token,
       id: linkExpired.id,
     });
-    if (res.sucess === 1) {
+    if (res.success === 1) {
       setAPIsuccessfinal(res.message);
       setlinkExpired({ ...linkExpired, message: "" });
     } else if (res.success === 0) {
@@ -41,16 +41,19 @@ export default function ActiveAccount() {
   };
 
   const onSubmit = async (data: any) => {
-    setAPIsuccess("");
-    const res = await ResetPasswordService({ password: data.password });
+    const res = await ResetPasswordService({
+      password: data.password,
+      token: params.token,
+      isFor: "activeAccount",
+    });
     if (res.success === 0) {
       setAPIerror(res.message);
-    } else {
-      setAPIsuccessfinal(res.messgae);
+    } else if (res.success === 1) {
+      setAPIsuccessfinal(res.message);
     }
   };
 
-  function handleActivateAccount() {
+  useEffect(() => {
     ActiveAccountService(params.token).then((res) => {
       if (res.success === 0) {
         setAPIerror(res.message);
@@ -60,7 +63,7 @@ export default function ActiveAccount() {
         setlinkExpired({ message: res.message, id: res.id });
       }
     });
-  }
+  }, []);
   return (
     <>
       <div className="container border w-full mt-4 h-full md:min-h-[400px] lg:min-h-[550px] text-primary bg-light2">
@@ -72,26 +75,6 @@ export default function ActiveAccount() {
               className="h-48 w-48 lg:h-96 lg:w-96"
             />
           </div>
-          {APIerror.length === 0 &&
-            APIsuccess.length === 0 &&
-            linkExpired.message.length === 0 &&
-            APIsuccessfinal.length === 0 && (
-              <div>
-                <div className="mb-3 capitalize">
-                  click below to activate your account
-                </div>
-                <button
-                  type="submit"
-                  className={`px-10  font-semibold border border-light1 text-lg  rounded-xl text-center subpixel-antialiased`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleActivateAccount();
-                  }}
-                >
-                  Activate Account
-                </button>
-              </div>
-            )}
           {APIerror.length > 0 && (
             <div className="text-xl text-secondary  bg-warning rounded py-2 my-2 px-2">
               {APIerror}
@@ -119,7 +102,7 @@ export default function ActiveAccount() {
               </p>
             </div>
           )}
-          {APIsuccess.length > 0 && (
+          {APIsuccess.length > 0 && APIsuccessfinal.length === 0 && (
             <div className=" text-primary  w-full max-w-[420px] rounded p-2 my-2">
               <div className="text">
                 {" "}
@@ -143,7 +126,6 @@ export default function ActiveAccount() {
                            ? "text-primary"
                            : "text-light1"
                        }`}
-                    // disabled={!methods.formState.isValid}
                   >
                     submit
                   </button>

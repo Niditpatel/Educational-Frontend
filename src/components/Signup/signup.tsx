@@ -19,12 +19,12 @@ export default function Signup() {
   const [Titles, setTitles] = useState([]);
   const [APIerror, setAPIerror] = useState("");
   const [APIsuccess, setAPIsuccess] = useState("");
+  const [CahcheInstitute, setCahcheInstitute] = useState<any>([]);
 
   const methods = useForm({
     mode: "onChange",
     resolver: yupResolver(SignupDetailSchema),
   });
-
   const onSubmit = async (data: any) => {
     setAPIerror("");
     setAPIsuccess("");
@@ -44,11 +44,17 @@ export default function Signup() {
   };
 
   const selectInstitute = async (inputValue: string) => {
-    const res = await GetInstitutesService(inputValue);
-    const institutes = res.map((val: any) => {
-      return { label: val.name.toUpperCase(), value: val._id };
-    });
-    return institutes;
+    if (inputValue.length > 2) {
+      const res = await GetInstitutesService(inputValue);
+      const institutes = res.map((val: any) => {
+        return { label: val.name.toUpperCase(), value: val._id };
+      });
+      setCahcheInstitute([...institutes]);
+      return institutes;
+    }
+    // else {
+    //  return CahcheInstitute;
+    // }
   };
 
   useEffect((): any => {
@@ -97,6 +103,7 @@ export default function Signup() {
                   placeholder="Search Institute"
                   fieldname="institute"
                   loadOptions={selectInstitute}
+                  instituteDefaultOptions={CahcheInstitute}
                   required={true}
                 />
                 <TextField
@@ -109,6 +116,7 @@ export default function Signup() {
                   fieldname="title"
                   placeholder="Select Title"
                   options={Titles}
+                  isSearchable={false}
                   required={true}
                 />
                 <TextField
@@ -143,7 +151,6 @@ export default function Signup() {
                     type="submit"
                     className={`px-10  font-semibold border border-light1 text-lg  rounded-xl text-center subpixel-antialiased 
               ${methods.formState.isValid ? "text-primary" : "text-light1"}`}
-                    // disabled={!methods.formState.isValid}
                   >
                     Register
                   </button>

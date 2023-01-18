@@ -110,7 +110,7 @@ export default function Navbar() {
                           <ul className=" dropdown-menu border w-full min-w-max absolute hidden z-50 float-left py-2 text-left rounded text-light2 bg-primary xl:text-primary xl:bg-light2  mt-1 m-0">
                             <li>
                               <button
-                                className=" dropdown-item px-4 flex items-center space-x-2 "
+                                className=" dropdown-item px-4 flex w-full items-center space-x-2 focus:outline-none active:bg-blck"
                                 onClick={(e) => {
                                   e.preventDefault();
                                 }}
@@ -121,7 +121,7 @@ export default function Navbar() {
                             </li>
                             <li>
                               <button
-                                className=" dropdown-item px-4 flex items-center space-x-2 "
+                                className=" dropdown-item px-4 flex w-full items-center space-x-2 foucs:outline-none"
                                 onClick={(e) => {
                                   e.preventDefault();
                                   handleLogout();

@@ -17,7 +17,7 @@ const Signup = lazy(() => import("./components/Signup/signup"));
 const ResetPassword = lazy(
   () => import("./components/common/ResetPassword/ResetPassowrd")
 );
-const ForgotPassword = lazy(() => import("./components/common/ForgotPassword"));
+const ForgotPassword = lazy(() => import("./components/common/ForgotPassword/ForgotPassword"));
 const Administration = lazy(() => import("./components/Admin/Adminitration"));
 const Class = lazy(() => import("./components/Class/Class"));
 const Assets = lazy(() => import("./components/Assets/Assets"));

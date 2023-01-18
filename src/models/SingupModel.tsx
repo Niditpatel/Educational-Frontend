@@ -7,7 +7,7 @@ const SignupDetailSchema = Yup.object().shape({
     .email()
     .required("email is required")
     .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, "please enter valid email"),
-  institute: Yup.object().required("institute is required"),
+  institute: Yup.object().required("institute is required").nullable(),
   password: Yup.string()
     .required("password is  Required")
     .min(8, "Min 8 Character is Required")
@@ -34,7 +34,6 @@ const SignupDetailSchema = Yup.object().shape({
       "you have to aggree with our terms and conditions for ragistration"
     )
     .required(),
-  role: Yup.number().default(2),
 });
 
 export { SignupDetailSchema };

@@ -13,20 +13,16 @@ export default function TextField({
   return (
     <>
       <div className="flex mt-5 w-full space-x-2">
-        <div className="relative  w-full">
+        <div className="form-floating  w-full">
           <input
             type={type ? type : "text"}
-            className="block rounded px-2.5 pb-2.5 pt-5 w-full text-sm border appearance-none  focus:outline-none bg-white  peer"
-            placeholder={" "}
             {...registration}
             {...rest}
+            className="form-control  block rounded px-2.5 pb-2.5 pt-5 w-full text-sm border
+            transition ease-in-out m-0  focus:outline-none focus:ring-0"
+            placeholder={label}
           />
-          <label
-            className="absolute duration-300 transform -translate-y-4  scale-75 top-4 z-10 origin-[0] left-2.5  peer-placeholder-shown:scale-100
-           peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 "
-          >
-            {label}
-          </label>
+          <label className="text-primary">{label}</label>
         </div>
         <div
           className={`w-2 ${
