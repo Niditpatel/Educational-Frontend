@@ -7,6 +7,7 @@ import { contextLogUser } from "../Login/LogUserContext";
 import { IoExitOutline } from "react-icons/io5";
 import { useEffect, useState } from "react";
 import { AiOutlineUser } from "react-icons/ai";
+import { RxDashboard } from "react-icons/rx";
 
 export default function Navbar() {
   const [LoggedUser, setLoggedUser] = useState<any>();
@@ -117,6 +118,18 @@ export default function Navbar() {
                               >
                                 <AiOutlineUser />
                                 <span>Profile</span>
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                className=" dropdown-item px-4 flex w-full items-center space-x-2 foucs:outline-none"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  navigate("/admin");
+                                }}
+                              >
+                                <RxDashboard />
+                                <span> Dashboard</span>
                               </button>
                             </li>
                             <li>

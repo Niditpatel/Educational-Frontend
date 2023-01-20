@@ -52,9 +52,6 @@ export default function Signup() {
       setCahcheInstitute([...institutes]);
       return institutes;
     }
-    // else {
-    //  return CahcheInstitute;
-    // }
   };
 
   useEffect((): any => {

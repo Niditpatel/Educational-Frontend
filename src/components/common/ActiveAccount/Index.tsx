@@ -13,7 +13,11 @@ import {
 
 export default function ActiveAccount() {
   const [APIerror, setAPIerror] = useState("");
-  const [APIsuccess, setAPIsuccess] = useState("");
+  const [APIsuccess, setAPIsuccess] = useState({
+    message: "",
+    id: "",
+    isFor: "",
+  });
   const [APIsuccessfinal, setAPIsuccessfinal] = useState("");
   const [linkExpired, setlinkExpired] = useState({ message: "", id: "" });
   const params = useParams();
@@ -24,8 +28,7 @@ export default function ActiveAccount() {
   });
 
   const handleRegenerateLink = async () => {
-    setAPIerror("");
-
+    setlinkExpired({ ...linkExpired, message: "" });
     const res = await RegenerateLinkService({
       isFor: "activeAccount",
       token: params.token,
@@ -33,18 +36,17 @@ export default function ActiveAccount() {
     });
     if (res.success === 1) {
       setAPIsuccessfinal(res.message);
-      setlinkExpired({ ...linkExpired, message: "" });
     } else if (res.success === 0) {
       setAPIerror(res.message);
-      setlinkExpired({ ...linkExpired, message: "" });
     }
   };
 
   const onSubmit = async (data: any) => {
+    setAPIsuccess({ ...APIsuccess, message: "" });
     const res = await ResetPasswordService({
       password: data.password,
-      token: params.token,
-      isFor: "activeAccount",
+      id: APIsuccess.id,
+      isFor: APIsuccess.isFor,
     });
     if (res.success === 0) {
       setAPIerror(res.message);
@@ -58,7 +60,7 @@ export default function ActiveAccount() {
       if (res.success === 0) {
         setAPIerror(res.message);
       } else if (res.success === 1) {
-        setAPIsuccess(res.message);
+        setAPIsuccess({ message: res.message, id: res.id, isFor: res.isFor });
       } else if (res.success === 2) {
         setlinkExpired({ message: res.message, id: res.id });
       }
@@ -102,7 +104,7 @@ export default function ActiveAccount() {
               </p>
             </div>
           )}
-          {APIsuccess.length > 0 && APIsuccessfinal.length === 0 && (
+          {APIsuccess.message.length > 0 && (
             <div className=" text-primary  w-full max-w-[420px] rounded p-2 my-2">
               <div className="text">
                 {" "}

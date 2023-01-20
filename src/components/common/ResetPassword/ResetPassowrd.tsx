@@ -1,35 +1,80 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import PasswordField from "../Fields/PasswordField";
-import { useState } from "react";
-import { ResetPassword as ResetPasswordService } from "../../../AuthService";
+import { useState, useEffect } from "react";
+import {
+  ResetPassword as ResetPasswordService,
+  CheckForResetPassword as CheckForResetPasswordService,
+  RegenerateLink as RegenerateLinkService,
+} from "../../../AuthService";
 import { ResetPasswordSchema } from "../../../models/ResetPasswordModel";
 import { AiOutlineWarning } from "react-icons/ai";
 import resetpassword from "../../../Images/resetpassword.jpg";
 import { useParams } from "react-router-dom";
+
 export default function ResetPassword() {
   const [APIerror, setAPIerror] = useState("");
-  const [APIsuccess, setAPIsuccess] = useState("");
+  const [APIsuccess, setAPIsuccess] = useState({
+    message: "",
+    id: "",
+    isFor: "",
+  });
+  const [linkExpired, setlinkExpired] = useState({ message: "", id: "" });
+  const [APIsuccessfinal, setAPIsuccessfinal] = useState("");
+
   const methods = useForm({
     mode: "onChange",
     resolver: yupResolver(ResetPasswordSchema),
   });
+
   const params = useParams();
+
   const onSubmit = async (data: any) => {
-    setAPIsuccess("");
-    setAPIerror("");
+    setAPIsuccess({ ...APIsuccess, message: "" });
     const res = await ResetPasswordService({
       password: data.password,
-      token: params.token,
+      id: APIsuccess.id,
+      isFor: APIsuccess.isFor,
     });
     if (res.success === 0) {
       setAPIerror(res.message);
-      setAPIsuccess("");
-    } else {
-      setAPIerror("");
-      setAPIsuccess(res.message);
+    } else if (res.success === 1) {
+      setAPIsuccessfinal(res.message);
     }
   };
+
+  const handleRegenerateLink = async () => {
+    setlinkExpired({ ...linkExpired, message: "" });
+    const res = await RegenerateLinkService({
+      isFor: "resetPassword",
+      token: params.token,
+      id: linkExpired.id,
+    });
+    if (res.success === 1) {
+      setAPIsuccessfinal(res.message);
+    } else if (res.success === 0) {
+      setAPIerror(res.message);
+    }
+  };
+
+  useEffect(() => {
+    setAPIerror("");
+    setAPIsuccess({ message: "", id: "", isFor: "" });
+    setlinkExpired({ message: "", id: "" });
+    CheckForResetPasswordService({
+      token: params.token,
+      isFor: "resetpassword",
+    }).then((res) => {
+      if (res.success === 0) {
+        setAPIerror(res.message);
+      } else if (res.success === 1) {
+        setAPIsuccess({ message: res.message, id: res.id, isFor: res.isFor });
+      } else if (res.success === 2) {
+        setlinkExpired({ message: res.message, id: res.userId });
+      }
+    });
+  }, []);
+
   return (
     <>
       <div className="bg-light2 text-primary lg:py-10 lg:min-h-[550px] ">
@@ -44,21 +89,41 @@ export default function ResetPassword() {
           {/* errors from api  */}
           {APIerror.length > 0 && (
             <div className="flex justify-center  items-center basis-1/2 ">
-              <div className="text-xl h-fit text-secondary flex space-x-4 bg-warning rounded py-2 px-2 my-2">
+              <div className="text-xl h-fit text-secondary flex space-x-4  items-center bg-warning rounded py-2 px-2 my-2">
                 <AiOutlineWarning className="text-5xl" />{" "}
-                <span>{APIerror} try again</span>
+                <span>{APIerror}</span>
               </div>
             </div>
           )}
           {/* success msg  */}
-          {APIsuccess.length > 0 && (
+          {APIsuccessfinal.length > 0 && (
             <div className="flex justify-center  items-center basis-1/2 ">
-              <div className="my-3 h-fit rounded bg-success px-2 py-1">
-                {APIsuccess}
+              <div className="text-xl h-fit text-secondary  bg-success rounded py-2 px-2 my-2">
+                <span>{APIsuccessfinal}</span>
               </div>
             </div>
           )}
-          {APIsuccess.length === 0 && APIerror.length === 0 && (
+          {/* Link expired  */}
+          {linkExpired.message.length > 0 && (
+            <div className="flex justify-center  items-center basis-1/2 ">
+              <div className="text-xl h-fit text-primary  py-2 px-2 my-2">
+                <p className="">
+                  Link is expired please{" "}
+                  <button
+                    className="underline text-light1 active:text-primary"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleRegenerateLink();
+                    }}
+                  >
+                    click Here
+                  </button>{" "}
+                  to regenerate Link
+                </p>
+              </div>
+            </div>
+          )}
+          {APIsuccess.message.length > 0 && (
             <FormProvider {...methods}>
               <form
                 onSubmit={methods.handleSubmit(onSubmit)}
@@ -81,7 +146,6 @@ export default function ResetPassword() {
                       type="submit"
                       className={`px-10  font-semibold border border-light1 text-lg  rounded-xl text-center subpixel-antialiased 
               ${methods.formState.isValid ? "text-primary" : "text-light1"}`}
-                      // disabled={!methods.formState.isValid}
                     >
                       submit
                     </button>

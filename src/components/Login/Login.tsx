@@ -21,7 +21,6 @@ export default function Login() {
   let { setLoguser } = useOutletContext<any>();
 
   const onSubmit = async (data: any) => {
-    console.log(process.env.REACT_APP_API_URL);
     const res = await LoginService(data);
     if (res.success === 1) {
       sessionStorage.setItem("Access", res.token);

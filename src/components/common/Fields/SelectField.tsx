@@ -1,14 +1,14 @@
 import Select, { components } from "react-select";
 import AsyncSelect from "react-select/async";
 import { Controller, useFormContext, useController } from "react-hook-form";
-import { forwardRef } from "react";
-import { BsArrowRight } from "react-icons/bs";
+import { forwardRef, useEffect } from "react";
+// import { BsArrowRight } from "react-icons/bs";
 
-const Control = ({ children, ...props }: any) => (
-  <components.Control {...props}>
-    Title <BsArrowRight className="ml-2" /> {children}
-  </components.Control>
-);
+// const Control = ({ children, ...props }: any) => (
+//   <components.Control {...props}>
+//     Title <BsArrowRight className="ml-2" /> {children}
+//   </components.Control>
+// );
 
 const selectStyles = {
   menu: (provided: any) => ({
@@ -56,7 +56,7 @@ const SingleSelect = forwardRef(
                   {...field}
                   options={options}
                   styles={selectStyles}
-                  components={{ Control }}
+                  // components={{ Control }}
                   {...rest}
                 />
               )}
@@ -78,7 +78,6 @@ const SingleSelect = forwardRef(
 
 export function AsyncSingleSelect({
   fieldname,
-  options,
   required,
   loadOptions,
   instituteDefaultOptions,
@@ -110,9 +109,9 @@ export function AsyncSingleSelect({
                 {...rest}
                 noOptionsMessage={({ inputValue }) =>
                   !inputValue
-                    ? "Start Typing to Search Institutes"
+                    ? "Start Typing to View Results"
                     : inputValue.length > 2
-                    ? "No Institute Are Found Matching This Value"
+                    ? "No Result Are Found Matching This Value"
                     : "Type At Least Three Character to View Result"
                 }
               />
@@ -134,9 +133,10 @@ export function AsyncSingleSelect({
 
 export function AsyncMultiSingleSelect({
   fieldname,
-  options,
   required,
   loadOptions,
+  defaultOptions,
+  isSearchable,
   ...rest
 }: any) {
   const methods = useFormContext();
@@ -144,6 +144,16 @@ export function AsyncMultiSingleSelect({
   const { fieldState } = useController({ name: fieldname });
   let error = fieldState?.error;
   const { placeholder, ...restSelectStyles } = selectStyles;
+
+  useEffect(() => {
+    const fieldvalue = sessionStorage.getItem(fieldname);
+    if (fieldvalue !== undefined && fieldvalue !== null) {
+      if (fieldvalue?.length > 0) {
+        methods.setValue(fieldname, JSON.parse(fieldvalue));
+      }
+    }
+  }, []);
+
   return (
     <>
       <div className="flex w-full space-x-2">
@@ -155,6 +165,10 @@ export function AsyncMultiSingleSelect({
               <AsyncSelect
                 {...field}
                 isMulti
+                isClearable
+                cacheOptions
+                isSearchable={isSearchable}
+                defaultOptions={defaultOptions}
                 loadOptions={loadOptions}
                 getOptionValue={(option: any) => option.value}
                 getOptionLabel={(option: any) => option.label}
@@ -165,6 +179,13 @@ export function AsyncMultiSingleSelect({
                   }),
                   ...restSelectStyles,
                 }}
+                noOptionsMessage={({ inputValue }) =>
+                  !inputValue
+                    ? "Start Typing to View Results"
+                    : inputValue.length > 2
+                    ? "No Result Are Found Matching This Value"
+                    : "Type At Least Three Character to View Result"
+                }
                 {...rest}
               />
             )}
