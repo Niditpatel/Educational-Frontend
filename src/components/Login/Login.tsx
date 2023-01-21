@@ -18,19 +18,22 @@ export default function Login() {
     mode: "onChange",
     resolver: yupResolver(LoginDetailSchema),
   });
-  let { setLoguser } = useOutletContext<any>();
+  let { setLoguser, handleLoading } = useOutletContext<any>();
 
   const onSubmit = async (data: any) => {
     const res = await LoginService(data);
+    handleLoading(true);
     if (res.success === 1) {
       sessionStorage.setItem("Access", res.token);
       sessionStorage.setItem("User", JSON.stringify(res.LOGuser));
       navigate("/admin");
       setLoguser(res.LOGuser);
       methods.reset();
+      handleLoading(false);
     } else {
       setAPIerror(res.message);
       methods.reset();
+      handleLoading(false);
     }
   };
   return (

@@ -2,45 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
-.primary-placeholder::placeholder{
-    color: #274472;
+.primary-placeholder::placeholder {
+  color: #274472;
 }
 .light1-placeholder::placeholder {
-    color: #5885AF;
+  color: #5885af;
 }
 
-
-
+.modal-backdrop.fade {
+  opacity: 0.1 !important;
+}
 @media (min-width: 1440px) {
-    .navbar-expand-2xl {
-        flex-direction: row;
-        flex-wrap: nowrap;
-        justify-content: flex-start;
-    }
+  .navbar-expand-2xl {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
 
-    .navbar-expand-2xl .navbar-nav {
-        flex-direction: row;
-    }
+  .navbar-expand-2xl .navbar-nav {
+    flex-direction: row;
+  }
 
-    .navbar-expand-2xl .dropdown-menu {
-        position: absolute;
-    }
+  .navbar-expand-2xl .dropdown-menu {
+    position: absolute;
+  }
 
-    .navbar-expand-2xl .nav-link {
-        padding-right: .5rem;
-        padding-left: .5rem;
-    }
+  .navbar-expand-2xl .nav-link {
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+  }
 
-    .navbar-expand-custom>.container {
-        flex-wrap: nowrap;
-    }
+  .navbar-expand-custom > .container {
+    flex-wrap: nowrap;
+  }
 
-    .navbar-expand-2xl .navbar-collapse {
-        display: flex !important;
-        flex-basis: auto;
-    }
+  .navbar-expand-2xl .navbar-collapse {
+    display: flex !important;
+    flex-basis: auto;
+  }
 
-    .navbar-expand-2xl .navbar-toggler {
-        display: none;
-    }
+  .navbar-expand-2xl .navbar-toggler {
+    display: none;
+  }
 }

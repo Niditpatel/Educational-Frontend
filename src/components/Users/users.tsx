@@ -4,12 +4,18 @@ import * as Yup from "yup";
 import { AsyncMultiSingleSelect } from "../common/Fields/SelectField";
 import { useEffect, useState } from "react";
 import { GetInstitutes as GetInstitutesService } from "../../GetDataService";
-import { Get as GetDataService } from "../../CurdService";
-
+import {
+  Get as GetDataService,
+  Delete as DeleteDataService,
+} from "../../CurdService";
+import { MdModeEditOutline, MdDelete } from "react-icons/md";
+import { AiOutlineWarning } from "react-icons/ai";
+import { useOutletContext } from "react-router-dom";
+import { BsFillCaretLeftFill, BsFillCaretRightFill } from "react-icons/bs";
 const searchUserSchema = Yup.object().shape({
   query: Yup.string(),
-  limit: Yup.number(),
-  offset: Yup.number(),
+  limit: Yup.number().default(5),
+  offset: Yup.number().default(0),
   order: Yup.number(),
   sort_by: Yup.string(),
   search_schools: Yup.array().of(Yup.object()),
@@ -19,8 +25,11 @@ const searchUserSchema = Yup.object().shape({
 export default function Users() {
   const [selectRoles, setselectRoles] = useState<any>([]);
   const [CahcheInstitute, setCahcheInstitute] = useState<any>([]);
-  const [Count, setCount] = useState("");
+  const [Count, setCount] = useState<any>();
   const [Users, setUsers] = useState<any>([]);
+  const [DeleteUser, setDeleteUser] = useState("");
+  const [DeleteUserRespone, setDeleteUserRespone] = useState("");
+  const { handleLoading } = useOutletContext<any>();
   const methods = useForm({
     mode: "onChange",
     resolver: yupResolver(searchUserSchema),
@@ -28,7 +37,7 @@ export default function Users() {
 
   const onSubmit = async (data: any) => {
     const token = sessionStorage.getItem("Access");
-
+    handleLoading(true);
     if (data.role !== undefined) {
       sessionStorage.setItem("role", JSON.stringify(data.role));
     }
@@ -50,9 +59,9 @@ export default function Users() {
           ? data.search_schools.map((item: any) => item.value).join("&&")
           : "",
     }).then((res: any) => {
-      console.log(res);
+      handleLoading(false);
       setUsers([...res.data]);
-      setCount(res.count);
+      setCount(Math.ceil(parseInt(res.count) / 2));
     });
   };
 
@@ -67,6 +76,16 @@ export default function Users() {
     }
   };
 
+  function handleDelete() {
+    handleLoading(true);
+    const token = sessionStorage.getItem("Access");
+    DeleteDataService("user/", token, DeleteUser).then((res) => {
+      handleLoading(false);
+      setDeleteUserRespone(res.message);
+      console.log(res);
+    });
+  }
+
   useEffect(() => {
     const token = sessionStorage.getItem("Access");
     const query = sessionStorage.getItem("query");
@@ -75,7 +94,9 @@ export default function Users() {
     if (query !== null && query !== undefined) {
       methods.setValue("query", JSON.parse(query));
     }
+    handleLoading(true);
     GetDataService("roles", token, {}).then((res) => {
+      handleLoading(false);
       if (res.success === 1) {
         const options = res.data.map((val: any) => {
           return { label: val, value: val };
@@ -97,11 +118,14 @@ export default function Users() {
               .map((item: any) => item.value)
               .join("&&")
           : "",
+      offset: 0,
+      limit: 5,
     }).then((res: any) => {
+      handleLoading(false);
       setUsers([...res.data]);
-      setCount(res.count);
+      setCount(Math.ceil(parseInt(res.count) / 2));
     });
-  }, []);
+  }, [DeleteUserRespone]);
   return (
     <>
       <div className="border">
@@ -168,7 +192,12 @@ export default function Users() {
                   </button>
                 </div>
                 <div>
-                  <button className="underline capitalize">
+                  <button
+                    className="underline capitalize"
+                    onClick={(e) => {
+                      e.preventDefault();
+                    }}
+                  >
                     &#43; create user
                   </button>
                 </div>
@@ -194,6 +223,7 @@ export default function Users() {
                             <th className="border p-1">Title</th>
                             <th className="border p-1">Institute Id</th>
                             <th className="border p-1">Institute</th>
+                            <th className="border p-1">Actions</th>
                           </tr>
                         }
                       </thead>
@@ -210,6 +240,28 @@ export default function Users() {
                             <td className="border p-1">
                               {item.institute.name}
                             </td>
+                            <td>
+                              <div className="flex ">
+                                <button
+                                  className="mx-2 "
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                  }}
+                                >
+                                  <MdModeEditOutline />
+                                </button>
+                                <button
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#confirmModal"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    setDeleteUser(item._id);
+                                  }}
+                                >
+                                  <MdDelete />
+                                </button>
+                              </div>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -217,24 +269,46 @@ export default function Users() {
                   )}
                 </div>
                 <div className="flex my-5 justify-between">
-                  <div className="w-16 border flex overflow-auto">
-                    {Math.ceil(parseInt(Count) / 2)}
-                    {new Array(3).fill(1).map((item, index) => (
-                      <button className="mx-3" key={index}>
-                        {index}
-                      </button>
-                    ))}
+                  <div>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                      }}
+                    >
+                      <BsFillCaretLeftFill />
+                    </button>
+                    <input
+                      type="text"
+                      value={"0"}
+                      className="w-10 mx-3 text-center border-b border-primary focus:outline-none "
+                      onChange={(e) => {
+                        e.target.value = e.target.value.replace(/\D/g, "");
+                        if (parseInt(e.target.value) > Count) {
+                          e.target.value = Count;
+                          console.log(e.target.value);
+                        }
+                      }}
+                    />
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                      }}
+                    >
+                      <BsFillCaretRightFill />
+                    </button>
                   </div>
                   <div>
                     <label htmlFor="">Display </label>
                     <select
-                      name=""
                       id=""
                       className="bg-white focus:outline-none border-b "
+                      {...methods.register("limit")}
                     >
-                      <option value="1">1 rows</option>
-                      <option value="2">2 rows</option>
-                      <option value="3">3 rows</option>
+                      <option value={5} selected>
+                        5 rows
+                      </option>
+                      <option value={10}>10 rows</option>
+                      <option value={15}>15 rows</option>
                     </select>
                   </div>
                 </div>
@@ -242,6 +316,68 @@ export default function Users() {
             </form>
           </FormProvider>
           {/* for action new  */}
+          <button
+            type="button"
+            className="inline-block px-6 py-2.5 bg-blue-600 text-black font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
+            data-bs-toggle="modal"
+            data-bs-target="#confirmModal"
+          >
+            Lanuch Model
+          </button>
+
+          <div
+            className="modal fade fixed top-20 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
+            id="confirmModal"
+            data-bs-backdrop="static"
+            data-bs-keyboard="false"
+            tabIndex={-1}
+            aria-labelledby="staticBackdropLabel"
+            aria-hidden="true"
+          >
+            <div className="modal-dialog relative w-auto pointer-events-none">
+              <div className="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current">
+                <div className="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md">
+                  <h5
+                    className="text-xl font-medium leading-normal text-gray-800"
+                    id="exampleModalLabel"
+                  >
+                    <div className="flex items-center space-x-2 text-danger">
+                      <AiOutlineWarning /> <span className=""> Alert</span>
+                    </div>
+                  </h5>
+                  <button
+                    type="button"
+                    className="btn-close box-content w-4 h-4 p-1 text-secondary border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-primary hover:opacity-75 hover:no-underline"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div className="modal-body relative p-4">
+                  Are you Sure , you want to delete ?
+                </div>
+                <div className="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
+                  <button
+                    type="button"
+                    className="inline-block px-6 py-2.5 bg-purple-600 text-danger font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-purple-700 hover:shadow-lg focus:bg-purple-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-purple-800 active:shadow-lg transition duration-150 ease-in-out"
+                    data-bs-dismiss="modal"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleDelete();
+                    }}
+                  >
+                    Yes
+                  </button>
+                  <button
+                    type="button"
+                    data-bs-dismiss="modal"
+                    className="inline-block px-6 py-2.5 bg-blue-600  font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out ml-1"
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </>

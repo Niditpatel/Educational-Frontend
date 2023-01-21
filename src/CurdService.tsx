@@ -34,10 +34,9 @@ const Update = async (data: any, endpoints: string) => {
   }
 };
 
-const Delete = async (data: any, endpoints: string) => {
-  const token = sessionStorage.getItem("token");
+const Delete = async (endpoints: any, token: any, id: any) => {
   try {
-    const res = await axios.delete<any>(API_URL + endpoints + data, {
+    const res = await axios.delete<any>(API_URL + endpoints + id, {
       headers: Headers(token),
     });
     return res.data;
