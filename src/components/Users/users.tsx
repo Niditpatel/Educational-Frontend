@@ -1,6 +1,5 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
 import { AsyncMultiSingleSelect } from "../common/Fields/SelectField";
 import { useEffect, useState } from "react";
 import { GetInstitutes as GetInstitutesService } from "../../GetDataService";
@@ -12,15 +11,9 @@ import { MdModeEditOutline, MdDelete } from "react-icons/md";
 import { AiOutlineWarning } from "react-icons/ai";
 import { useOutletContext } from "react-router-dom";
 import { BsFillCaretLeftFill, BsFillCaretRightFill } from "react-icons/bs";
-const searchUserSchema = Yup.object().shape({
-  query: Yup.string(),
-  limit: Yup.number().default(5),
-  offset: Yup.number().default(0),
-  order: Yup.number(),
-  sort_by: Yup.string(),
-  search_schools: Yup.array().of(Yup.object()),
-  role: Yup.array().of(Yup.object()),
-});
+import { SearchUsersModel } from "../../models/searchUsersModel";
+import CreateUser from "./CreateUser";
+import UpdateUser from "./UpdateUser";
 
 export default function Users() {
   const [selectRoles, setselectRoles] = useState<any>([]);
@@ -29,13 +22,17 @@ export default function Users() {
   const [Users, setUsers] = useState<any>([]);
   const [DeleteUser, setDeleteUser] = useState("");
   const [DeleteUserRespone, setDeleteUserRespone] = useState("");
+  const [ActionUserid, setActionUserid] = useState("");
+
   const { handleLoading } = useOutletContext<any>();
+
   const methods = useForm({
     mode: "onChange",
-    resolver: yupResolver(searchUserSchema),
+    resolver: yupResolver(SearchUsersModel),
   });
 
   const onSubmit = async (data: any) => {
+    console.log(data);
     const token = sessionStorage.getItem("Access");
     handleLoading(true);
     if (data.role !== undefined) {
@@ -104,6 +101,7 @@ export default function Users() {
         setselectRoles([...options]);
       }
     });
+
     GetDataService("user/", token, {
       query: query !== undefined && query !== null ? JSON.parse(query) : "",
       role:
@@ -118,18 +116,18 @@ export default function Users() {
               .map((item: any) => item.value)
               .join("&&")
           : "",
-      offset: 0,
+      offset: 1,
       limit: 5,
     }).then((res: any) => {
       handleLoading(false);
       setUsers([...res.data]);
-      setCount(Math.ceil(parseInt(res.count) / 2));
+      setCount(Math.ceil(parseInt(res.count) / 5));
     });
   }, [DeleteUserRespone]);
   return (
     <>
-      <div className="border">
-        <div className="border container px-2 text-primary">
+      <div className="">
+        <div className=" container px-2 text-primary">
           <div className="capitalize text-lg">Users</div>
           <FormProvider {...methods}>
             <form action="" onSubmit={methods.handleSubmit(onSubmit)}>
@@ -205,7 +203,13 @@ export default function Users() {
               <div>
                 <div className="flex my-5 justify-between">
                   <div>
-                    showing {0} - {Users.length} of {Count} results
+                    Showing{" "}
+                    {methods.getValues("offset") * methods.getValues("limit") +
+                      1}{" "}
+                    -{" "}
+                    {(methods.getValues("offset") + 1) *
+                      methods.getValues("limit")}{" "}
+                    of {Count * 5} results
                   </div>
                   <div>check box drop down of columns</div>
                 </div>
@@ -246,6 +250,8 @@ export default function Users() {
                                   className="mx-2 "
                                   onClick={(e) => {
                                     e.preventDefault();
+                                    setActionUserid(item._id);
+                                    console.log(ActionUserid);
                                   }}
                                 >
                                   <MdModeEditOutline />
@@ -273,25 +279,32 @@ export default function Users() {
                     <button
                       onClick={(e) => {
                         e.preventDefault();
+                        const offset = methods.getValues("offset");
+                        if (offset > 0) {
+                          methods.setValue("offset", offset - 1);
+                        }
                       }}
                     >
                       <BsFillCaretLeftFill />
                     </button>
                     <input
                       type="text"
-                      value={"0"}
                       className="w-10 mx-3 text-center border-b border-primary focus:outline-none "
+                      {...methods.register("offset")}
                       onChange={(e) => {
                         e.target.value = e.target.value.replace(/\D/g, "");
                         if (parseInt(e.target.value) > Count) {
                           e.target.value = Count;
-                          console.log(e.target.value);
                         }
                       }}
                     />
                     <button
                       onClick={(e) => {
                         e.preventDefault();
+                        const offset = methods.getValues("offset");
+                        if (offset < Count) {
+                          methods.setValue("offset", offset + 1);
+                        }
                       }}
                     >
                       <BsFillCaretRightFill />
@@ -304,9 +317,7 @@ export default function Users() {
                       className="bg-white focus:outline-none border-b "
                       {...methods.register("limit")}
                     >
-                      <option value={5} selected>
-                        5 rows
-                      </option>
+                      <option value={5}>5 rows</option>
                       <option value={10}>10 rows</option>
                       <option value={15}>15 rows</option>
                     </select>
@@ -316,15 +327,6 @@ export default function Users() {
             </form>
           </FormProvider>
           {/* for action new  */}
-          <button
-            type="button"
-            className="inline-block px-6 py-2.5 bg-blue-600 text-black font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
-            data-bs-toggle="modal"
-            data-bs-target="#confirmModal"
-          >
-            Lanuch Model
-          </button>
-
           <div
             className="modal fade fixed top-20 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
             id="confirmModal"
@@ -336,9 +338,9 @@ export default function Users() {
           >
             <div className="modal-dialog relative w-auto pointer-events-none">
               <div className="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current">
-                <div className="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md">
+                <div className="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b  rounded-t-md">
                   <h5
-                    className="text-xl font-medium leading-normal text-gray-800"
+                    className="text-xl font-medium leading-normal "
                     id="exampleModalLabel"
                   >
                     <div className="flex items-center space-x-2 text-danger">
@@ -355,10 +357,10 @@ export default function Users() {
                 <div className="modal-body relative p-4">
                   Are you Sure , you want to delete ?
                 </div>
-                <div className="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
+                <div className="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t  rounded-b-md">
                   <button
                     type="button"
-                    className="inline-block px-6 py-2.5 bg-purple-600 text-danger font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-purple-700 hover:shadow-lg focus:bg-purple-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-purple-800 active:shadow-lg transition duration-150 ease-in-out"
+                    className="inline-block px-6 py-2.5  text-danger font-medium text-xs leading-tight uppercase rounded shadow-md  hover:shadow-lg focus:bg-purple-700 focus:shadow-lg focus:outline-none focus:ring-0  active:shadow-lg transition duration-150 ease-in-out"
                     data-bs-dismiss="modal"
                     onClick={(e) => {
                       e.preventDefault();
@@ -378,6 +380,8 @@ export default function Users() {
               </div>
             </div>
           </div>
+          {/* <CreateUser /> */}
+          <UpdateUser userId={ActionUserid} />
         </div>
       </div>
     </>

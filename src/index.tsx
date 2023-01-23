@@ -7,6 +7,7 @@ import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { RouteGuard } from "./RouteGuard";
 import ErrorPage from "./components/common/ErrorPage/ErrorPage";
+import Profile from "./components/Profile.tsx/Profile";
 const LandingPage = lazy(() => import("./components/Landingpage/LandingPage"));
 const LandingPageContent = lazy(
   () => import("./components/Landingpage/LandingPageContant")
@@ -17,7 +18,9 @@ const Signup = lazy(() => import("./components/Signup/signup"));
 const ResetPassword = lazy(
   () => import("./components/common/ResetPassword/ResetPassowrd")
 );
-const ForgotPassword = lazy(() => import("./components/common/ForgotPassword/ForgotPassword"));
+const ForgotPassword = lazy(
+  () => import("./components/common/ForgotPassword/ForgotPassword")
+);
 const Administration = lazy(() => import("./components/Admin/Adminitration"));
 const Class = lazy(() => import("./components/Class/Class"));
 const Assets = lazy(() => import("./components/Assets/Assets"));
@@ -92,6 +95,7 @@ root.render(
               </RouteGuard>
             }
           ></Route>
+          <Route path="/profile" element={<Profile />}></Route>
           <Route
             path="/users"
             element={

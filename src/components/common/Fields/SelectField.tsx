@@ -17,7 +17,7 @@ const selectStyles = {
   }),
   control: (baseStylese: any) => ({
     ...baseStylese,
-    padding: "10px 12px",
+    padding: "10px 0px",
     color: "#274472",
     outline: 0,
     border: "1 !important",

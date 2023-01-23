@@ -1,8 +1,10 @@
 import { MdClose } from "react-icons/md";
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { CreateUserModelSchema } from "../../models/CreateUserModel";
 
 import { useEffect, useState } from "react";
+
 import { useOutletContext } from "react-router-dom";
 
 import { AsyncSingleSelect, SingleSelect } from "../common/Fields/SelectField";
@@ -12,12 +14,16 @@ import {
   GetTitles as GetTitlesService,
   GetInstitutes as GetInstitutesService,
 } from "../../GetDataService";
-import { Get as GetDataService } from "../../CurdService";
+import {
+  Get as GetDataService,
+  Update as UpdateDataService,
+  Delete as DeleteDataService,
+} from "../../CurdService";
+import { ForgotPassword as ForgotPasswordService } from "../../AuthService";
 
-import { CreateUserModelSchema } from "../../models/CreateUserModel";
-import { Signup as RegisterService } from "../../AuthService";
+export default function UpdateUser(props: any) {
+  let userId = props.userId;
 
-export default function CreateUser() {
   const [Title, setTitle] = useState([]);
   const [selectRoles, setselectRoles] = useState<any>([]);
   const [CahcheInstitute, setCahcheInstitute] = useState<any>([]);
@@ -25,35 +31,35 @@ export default function CreateUser() {
   const [APIerror, setAPIerror] = useState("");
   const [APIsuccess, setAPIsuccess] = useState("");
 
+  const { handleLoading } = useOutletContext<any>();
+
   const methods = useForm({
     mode: "onChange",
     resolver: yupResolver(CreateUserModelSchema),
-    defaultValues: {
-      title: null,
-      role: null,
-      institute: null,
-    },
   });
 
-  const { handleLoading } = useOutletContext<any>();
-
   const onSubmit = async (data: any) => {
-    setAPIsuccess("");
+    const token = sessionStorage.getItem("Access");
     setAPIerror("");
-    const { role, title, institute, ...restUserDetail } = data;
+    setAPIsuccess("");
     handleLoading(true);
-    const res = await RegisterService({
-      role: data.role.value,
-      title: data.title.value,
-      institute: data.institute.value,
-      ...restUserDetail,
-    });
-    if (res.success === 0) {
-      handleLoading(false);
-      setAPIerror(res.message);
-    } else {
+    const { institute, title, role, ...restData } = data;
+    const res = await UpdateDataService(
+      "user/" + userId,
+      {
+        institute: institute.value,
+        title: title.value,
+        role: role.value,
+        ...restData,
+      },
+      token,
+      {}
+    );
+    if (res.success === 1) {
       setAPIsuccess(res.message);
-      methods.reset();
+      handleLoading(false);
+    } else {
+      setAPIerror(res.message);
       handleLoading(false);
     }
   };
@@ -69,13 +75,45 @@ export default function CreateUser() {
     }
   };
 
+  const HandlePasswordReset = async () => {
+    setAPIsuccess("");
+    setAPIerror("");
+    const res = await ForgotPasswordService({
+      email: methods.getValues("email"),
+    });
+    if (res.success === 0) {
+      setAPIerror(res.message);
+    } else {
+      setAPIsuccess(res.message);
+    }
+  };
+
+  const HandleDeleteUser = async () => {
+    setAPIsuccess("");
+    setAPIerror("");
+    const token = sessionStorage.getItem("Access");
+    const res = await DeleteDataService("user/", token, userId);
+    if (res.success === 0) {
+      setAPIerror(res.message);
+      methods.reset();
+    } else {
+      setAPIsuccess(res.message);
+      methods.reset();
+    }
+  };
+
   useEffect(() => {
+    handleLoading(true);
+    setAPIsuccess("");
+    setAPIerror("");
+
     const token = sessionStorage.getItem("Access");
     GetTitlesService().then((data) => {
       const titles = data.map((value: any) => {
         return { label: value, value: value };
       });
       setTitle(titles);
+      handleLoading(false);
     });
 
     GetDataService("roles", token, {}).then((res) => {
@@ -84,14 +122,31 @@ export default function CreateUser() {
           return { label: val, value: val };
         });
         setselectRoles([...options]);
+        handleLoading(false);
       }
     });
-  });
+    GetDataService("user/" + userId, token, {}).then((res) => {
+      if (res.success === 1) {
+        console.log(res);
+        const user = res.user;
+        methods.setValue("email", user.email);
+        methods.setValue("firstName", user.firstName);
+        methods.setValue("lastName", user.lastName);
+        methods.setValue("role", { label: user.role, value: user.role });
+        methods.setValue("title", { label: user.title, value: user.title });
+        methods.setValue("institute", {
+          label: user.institute.name,
+          value: user.institute._id,
+        });
+      }
+      handleLoading(false);
+    });
+  }, [props.userId]);
 
   return (
     <>
       <div className="flex items-center space-x-2 justify-end text-primary ">
-        <span>retuen to top</span> <MdClose className="text-lg" />
+        <span>return to top</span> <MdClose className="text-lg" />
       </div>
       <div className="flex justify-center">
         {APIerror.length > 0 && (
@@ -153,12 +208,30 @@ export default function CreateUser() {
               />
             </div>
           </div>
-          <div className="flex items-center justify-center mt-5">
+          <div className="flex items-center justify-center space-x-4 mt-5">
             <button
               type="submit"
-              className="border border-primary w-32 text-center bg-primary text-white  py-1  capitalize hover:bg-white hover:text-primary "
+              className="border border-primary w-32 text-center bg-primary text-white  py-1  capitalize hover:bg-white hover:text-primary"
             >
-              Create User
+              Update
+            </button>
+            <button
+              className="border border-primary w-32 text-center bg-primary text-white  py-1  capitalize hover:bg-white hover:text-primary"
+              onClick={(e) => {
+                e.preventDefault();
+                HandlePasswordReset();
+              }}
+            >
+              Reset Password
+            </button>
+            <button
+              className="border border-primary w-32 text-center bg-primary text-white  py-1  capitalize hover:bg-white hover:text-primary"
+              onClick={(e) => {
+                e.preventDefault();
+                HandleDeleteUser();
+              }}
+            >
+              Delete
             </button>
           </div>
         </form>

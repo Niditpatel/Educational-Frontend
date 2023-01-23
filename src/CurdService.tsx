@@ -22,11 +22,16 @@ const Create = async (data: any, endpoints: string) => {
   }
 };
 
-const Update = async (data: any, endpoints: string) => {
-  const token = sessionStorage.getItem("token");
+const Update = async (
+  endpoints: string,
+  data: any,
+  token: any,
+  params: any
+) => {
   try {
     const res = await axios.put<any>(API_URL + endpoints, data, {
       headers: Headers(token),
+      params: params,
     });
     return res.data;
   } catch (error: any) {
