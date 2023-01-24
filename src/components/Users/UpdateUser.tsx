@@ -1,4 +1,3 @@
-import { MdClose } from "react-icons/md";
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { CreateUserModelSchema } from "../../models/CreateUserModel";
@@ -17,7 +16,6 @@ import {
 import {
   Get as GetDataService,
   Update as UpdateDataService,
-  Delete as DeleteDataService,
 } from "../../CurdService";
 import { ForgotPassword as ForgotPasswordService } from "../../AuthService";
 
@@ -30,6 +28,8 @@ export default function UpdateUser(props: any) {
 
   const [APIerror, setAPIerror] = useState("");
   const [APIsuccess, setAPIsuccess] = useState("");
+
+  const [LoggedUser, setLoggedUser] = useState<any>();
 
   const { handleLoading } = useOutletContext<any>();
 
@@ -88,26 +88,16 @@ export default function UpdateUser(props: any) {
     }
   };
 
-  const HandleDeleteUser = async () => {
-    setAPIsuccess("");
-    setAPIerror("");
-    const token = sessionStorage.getItem("Access");
-    const res = await DeleteDataService("user/", token, userId);
-    if (res.success === 0) {
-      setAPIerror(res.message);
-      methods.reset();
-    } else {
-      setAPIsuccess(res.message);
-      methods.reset();
-    }
-  };
-
   useEffect(() => {
     handleLoading(true);
     setAPIsuccess("");
     setAPIerror("");
 
     const token = sessionStorage.getItem("Access");
+    const user: any = sessionStorage.getItem("User");
+    const logUser = user !== null ? JSON.parse(user) : user;
+    setLoggedUser(logUser);
+
     GetTitlesService().then((data) => {
       const titles = data.map((value: any) => {
         return { label: value, value: value };
@@ -145,9 +135,6 @@ export default function UpdateUser(props: any) {
 
   return (
     <>
-      <div className="flex items-center space-x-2 justify-end text-primary ">
-        <span>return to top</span> <MdClose className="text-lg" />
-      </div>
       <div className="flex justify-center">
         {APIerror.length > 0 && (
           <div className="bg-warning rounded p-2">{APIerror}</div>
@@ -198,15 +185,21 @@ export default function UpdateUser(props: any) {
                 required={true}
               />
             </div>
-            <div>
-              <AsyncSingleSelect
-                fieldname="institute"
-                placeholder="Select Institute"
-                loadOptions={selectInstitute}
-                instituteDefaultOptions={CahcheInstitute}
-                required={true}
-              />
-            </div>
+            {LoggedUser && (
+              <>
+                {LoggedUser.role === "SuperAdmin" && (
+                  <div>
+                    <AsyncSingleSelect
+                      fieldname="institute"
+                      placeholder="Select Institute"
+                      loadOptions={selectInstitute}
+                      instituteDefaultOptions={CahcheInstitute}
+                      required={true}
+                    />
+                  </div>
+                )}
+              </>
+            )}
           </div>
           <div className="flex items-center justify-center space-x-4 mt-5">
             <button
@@ -223,15 +216,6 @@ export default function UpdateUser(props: any) {
               }}
             >
               Reset Password
-            </button>
-            <button
-              className="border border-primary w-32 text-center bg-primary text-white  py-1  capitalize hover:bg-white hover:text-primary"
-              onClick={(e) => {
-                e.preventDefault();
-                HandleDeleteUser();
-              }}
-            >
-              Delete
             </button>
           </div>
         </form>

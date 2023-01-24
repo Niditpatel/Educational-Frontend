@@ -1,17 +1,23 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+
 import { AsyncMultiSingleSelect } from "../common/Fields/SelectField";
-import { useEffect, useState } from "react";
+
+import { useEffect, useState, useMemo } from "react";
+import { useOutletContext } from "react-router-dom";
+
 import { GetInstitutes as GetInstitutesService } from "../../GetDataService";
 import {
   Get as GetDataService,
   Delete as DeleteDataService,
 } from "../../CurdService";
-import { MdModeEditOutline, MdDelete } from "react-icons/md";
+
+import { MdModeEditOutline, MdDelete, MdClose } from "react-icons/md";
 import { AiOutlineWarning } from "react-icons/ai";
-import { useOutletContext } from "react-router-dom";
 import { BsFillCaretLeftFill, BsFillCaretRightFill } from "react-icons/bs";
+
 import { SearchUsersModel } from "../../models/searchUsersModel";
+
 import CreateUser from "./CreateUser";
 import UpdateUser from "./UpdateUser";
 
@@ -23,16 +29,56 @@ export default function Users() {
   const [DeleteUser, setDeleteUser] = useState("");
   const [DeleteUserRespone, setDeleteUserRespone] = useState("");
   const [ActionUserid, setActionUserid] = useState("");
+  const [action, setaction] = useState("search");
+  const [limitAndOffset, setlimitAndOffset] = useState({
+    limit: 5,
+    offset: 0,
+  });
 
   const { handleLoading } = useOutletContext<any>();
 
   const methods = useForm({
     mode: "onChange",
     resolver: yupResolver(SearchUsersModel),
+    defaultValues: {
+      query: null,
+      limit: 5,
+      offset: 0,
+      search_schools: null || [],
+      role: null || [],
+    },
   });
 
+  const GetUsers = useMemo(async () => {
+    const token = sessionStorage.getItem("Access");
+    handleLoading(true);
+    const res = await GetDataService("user/", token, {
+      query: methods.getValues("query"),
+      limit: methods.getValues("limit"),
+      offset: methods.getValues("offset"),
+      search_schools:
+        methods.getValues("search_schools") !== undefined
+          ? methods
+              .getValues("search_schools")
+              .map((item: any) => item.value)
+              .join("&&")
+          : "",
+      role:
+        methods.getValues("role") !== undefined
+          ? methods
+              .getValues("role")
+              .map((item: any) => item.value)
+              .join("&&")
+          : "",
+    });
+    if (res.success === 1) {
+      setUsers([...res.data]);
+      setCount(Math.ceil(parseInt(res.count) / methods.getValues("limit")));
+    }
+    return true;
+  }, [limitAndOffset]);
+
   const onSubmit = async (data: any) => {
-    console.log(data);
     const token = sessionStorage.getItem("Access");
     handleLoading(true);
     if (data.role !== undefined) {
@@ -55,10 +101,12 @@ export default function Users() {
         data.search_schools !== undefined
           ? data.search_schools.map((item: any) => item.value).join("&&")
           : "",
+      offset: data.offset,
+      limit: data.limit,
     }).then((res: any) => {
       handleLoading(false);
       setUsers([...res.data]);
-      setCount(Math.ceil(parseInt(res.count) / 2));
+      setCount(Math.ceil(parseInt(res.count) / data.limit));
     });
   };
 
@@ -79,19 +127,24 @@ export default function Users() {
     DeleteDataService("user/", token, DeleteUser).then((res) => {
       handleLoading(false);
       setDeleteUserRespone(res.message);
-      console.log(res);
     });
   }
 
   useEffect(() => {
     const token = sessionStorage.getItem("Access");
+
     const query = sessionStorage.getItem("query");
     const role = sessionStorage.getItem("role");
     const search_schools = sessionStorage.getItem("search_schools");
+    const offset = sessionStorage.getItem("offset");
+    const limit = sessionStorage.getItem("limit");
+
     if (query !== null && query !== undefined) {
       methods.setValue("query", JSON.parse(query));
     }
+
     handleLoading(true);
+
     GetDataService("roles", token, {}).then((res) => {
       handleLoading(false);
       if (res.success === 1) {
@@ -116,12 +169,17 @@ export default function Users() {
               .map((item: any) => item.value)
               .join("&&")
           : "",
-      offset: 1,
-      limit: 5,
+      offset: offset !== undefined && offset !== null ? offset : 0,
+      limit: limit !== undefined && limit !== null ? limit : 5,
     }).then((res: any) => {
       handleLoading(false);
       setUsers([...res.data]);
-      setCount(Math.ceil(parseInt(res.count) / 5));
+      if (limit !== undefined && limit !== null) {
+        setCount(Math.ceil(parseInt(res.count) / parseInt(limit)));
+        console.log(Math.ceil(parseInt(res.count) / parseInt(limit)));
+      } else {
+        setCount(Math.ceil(parseInt(res.count) / 5));
+      }
     });
   }, [DeleteUserRespone]);
   return (
@@ -130,7 +188,7 @@ export default function Users() {
         <div className=" container px-2 text-primary">
           <div className="capitalize text-lg">Users</div>
           <FormProvider {...methods}>
-            <form action="" onSubmit={methods.handleSubmit(onSubmit)}>
+            <form onSubmit={methods.handleSubmit(onSubmit)}>
               <div className=" mt-5 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
                 <div>
                   <label htmlFor="" className="capitalize">
@@ -184,6 +242,9 @@ export default function Users() {
                     onClick={(e) => {
                       e.preventDefault();
                       methods.reset();
+                      sessionStorage.removeItem("query");
+                      sessionStorage.removeItem("search_schools");
+                      sessionStorage.removeItem("role");
                     }}
                   >
                     reset
@@ -194,6 +255,7 @@ export default function Users() {
                     className="underline capitalize"
                     onClick={(e) => {
                       e.preventDefault();
+                      setaction("new");
                     }}
                   >
                     &#43; create user
@@ -203,13 +265,13 @@ export default function Users() {
               <div>
                 <div className="flex my-5 justify-between">
                   <div>
-                    Showing{" "}
-                    {methods.getValues("offset") * methods.getValues("limit") +
-                      1}{" "}
+                    Showing 0-5 of 5 results
+                    {/* {methods.getValues("offset") *
+                      (methods.getValues("limit") + 1)}{" "}
                     -{" "}
                     {(methods.getValues("offset") + 1) *
-                      methods.getValues("limit")}{" "}
-                    of {Count * 5} results
+                      methods.getValues("limit")}
+                    of {parseInt(Count) * 5} results */}
                   </div>
                   <div>check box drop down of columns</div>
                 </div>
@@ -219,7 +281,7 @@ export default function Users() {
                       <thead>
                         {
                           <tr>
-                            <th className="border p-1">id</th>
+                            <th className="border p-1">Id</th>
                             <th className="border p-1">First Name</th>
                             <th className="border p-1">Last Name</th>
                             <th className="border p-1">Email</th>
@@ -251,7 +313,7 @@ export default function Users() {
                                   onClick={(e) => {
                                     e.preventDefault();
                                     setActionUserid(item._id);
-                                    console.log(ActionUserid);
+                                    setaction("edit");
                                   }}
                                 >
                                   <MdModeEditOutline />
@@ -282,6 +344,14 @@ export default function Users() {
                         const offset = methods.getValues("offset");
                         if (offset > 0) {
                           methods.setValue("offset", offset - 1);
+                          sessionStorage.setItem(
+                            "offset",
+                            (offset - 1).toString()
+                          );
+                          setlimitAndOffset({
+                            ...limitAndOffset,
+                            offset: offset - 1,
+                          });
                         }
                       }}
                     >
@@ -289,12 +359,21 @@ export default function Users() {
                     </button>
                     <input
                       type="text"
+                      id="offsetForUserManagement"
                       className="w-10 mx-3 text-center border-b border-primary focus:outline-none "
                       {...methods.register("offset")}
                       onChange={(e) => {
                         e.target.value = e.target.value.replace(/\D/g, "");
-                        if (parseInt(e.target.value) > Count) {
-                          e.target.value = Count;
+                        if (parseInt(e.target.value) > parseInt(Count) - 1) {
+                          e.target.value = (parseInt(Count) - 1).toString();
+                        }
+                        if (e.target.value.length > 0) {
+                          methods.setValue("offset", parseInt(e.target.value));
+                          setlimitAndOffset({
+                            ...limitAndOffset,
+                            offset: parseInt(e.target.value),
+                          });
+                          sessionStorage.setItem("offset", e.target.value);
                         }
                       }}
                     />
@@ -302,8 +381,16 @@ export default function Users() {
                       onClick={(e) => {
                         e.preventDefault();
                         const offset = methods.getValues("offset");
-                        if (offset < Count) {
+                        if (offset < parseInt(Count) - 1) {
                           methods.setValue("offset", offset + 1);
+                          sessionStorage.setItem(
+                            "offset",
+                            (offset + 1).toString()
+                          );
+                          setlimitAndOffset({
+                            ...limitAndOffset,
+                            offset: offset + 1,
+                          });
                         }
                       }}
                     >
@@ -316,6 +403,17 @@ export default function Users() {
                       id=""
                       className="bg-white focus:outline-none border-b "
                       {...methods.register("limit")}
+                      onChange={(e) => {
+                        e.preventDefault();
+                        sessionStorage.setItem("limit", e.target.value);
+                        methods.setValue("limit", parseInt(e.target.value));
+                        methods.setValue("offset", 0);
+                        sessionStorage.setItem("offset", "0");
+                        setlimitAndOffset({
+                          ...limitAndOffset,
+                          limit: parseInt(e.target.value),
+                        });
+                      }}
                     >
                       <option value={5}>5 rows</option>
                       <option value={10}>10 rows</option>
@@ -380,8 +478,21 @@ export default function Users() {
               </div>
             </div>
           </div>
-          {/* <CreateUser /> */}
-          <UpdateUser userId={ActionUserid} />
+          {action !== "search" && (
+            <div className="flex justify-end">
+              <button
+                className="flex items-center space-x-2  text-primary "
+                onClick={(e) => {
+                  e.preventDefault();
+                  setaction("search");
+                }}
+              >
+                <span>return to top</span> <MdClose className="text-lg" />
+              </button>
+            </div>
+          )}
+          {action === "new" && <CreateUser />}
+          {action === "edit" && <UpdateUser userId={ActionUserid} />}
         </div>
       </div>
     </>

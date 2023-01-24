@@ -1,4 +1,3 @@
-import { MdClose } from "react-icons/md";
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
@@ -25,13 +24,19 @@ export default function CreateUser() {
   const [APIerror, setAPIerror] = useState("");
   const [APIsuccess, setAPIsuccess] = useState("");
 
+  const [LoggedUser, setLoggedUser] = useState<any>();
+
   const methods = useForm({
     mode: "onChange",
     resolver: yupResolver(CreateUserModelSchema),
     defaultValues: {
-      title: null,
       role: null,
-      institute: null,
+      title: null,
+      institute: LoggedUser
+        ? LoggedUser.role === "SchoolAdmin"
+          ? {}
+          : null
+        : null,
     },
   });
 
@@ -71,6 +76,9 @@ export default function CreateUser() {
 
   useEffect(() => {
     const token = sessionStorage.getItem("Access");
+    const user: any = sessionStorage.getItem("User");
+    const logUser = user !== null ? JSON.parse(user) : user;
+    setLoggedUser(logUser);
     GetTitlesService().then((data) => {
       const titles = data.map((value: any) => {
         return { label: value, value: value };
@@ -86,13 +94,10 @@ export default function CreateUser() {
         setselectRoles([...options]);
       }
     });
-  });
+  }, []);
 
   return (
     <>
-      <div className="flex items-center space-x-2 justify-end text-primary ">
-        <span>retuen to top</span> <MdClose className="text-lg" />
-      </div>
       <div className="flex justify-center">
         {APIerror.length > 0 && (
           <div className="bg-warning rounded p-2">{APIerror}</div>
@@ -143,15 +148,29 @@ export default function CreateUser() {
                 required={true}
               />
             </div>
-            <div>
-              <AsyncSingleSelect
-                fieldname="institute"
-                placeholder="Select Institute"
-                loadOptions={selectInstitute}
-                instituteDefaultOptions={CahcheInstitute}
-                required={true}
-              />
-            </div>
+            {LoggedUser && (
+              <>
+                {LoggedUser.role === "SuperAdmin" && (
+                  <div>
+                    <AsyncSingleSelect
+                      fieldname="institute"
+                      placeholder="Select Institute"
+                      loadOptions={selectInstitute}
+                      instituteDefaultOptions={CahcheInstitute}
+                      required={true}
+                    />
+                  </div>
+                )}
+                {LoggedUser.role !== "SuperAdmin" && (
+                  <>
+                    {methods.setValue("institute", {
+                      label: LoggedUser.institute,
+                      value: LoggedUser.institute,
+                    })}
+                  </>
+                )}
+              </>
+            )}
           </div>
           <div className="flex items-center justify-center mt-5">
             <button
