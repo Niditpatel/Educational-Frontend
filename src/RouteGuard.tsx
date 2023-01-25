@@ -17,5 +17,15 @@ export function RouteAdminGuard({ children }: Props): any {
   const User: any = sessionStorage.getItem("User");
   if (JSON.parse(User).role === "SuperAdmin") {
     return children;
-  } else return <Navigate to={"/"}></Navigate>;
+  } else return <Navigate to={"/admin"}></Navigate>;
+}
+
+export function RouteSchoolGuard({ children }: Props): any {
+  const User: any = sessionStorage.getItem("User");
+  if (
+    JSON.parse(User).role === "SuperAdmin" ||
+    JSON.parse(User).role === "SchoolAdmin"
+  ) {
+    return children;
+  } else return <Navigate to={"/admin"}></Navigate>;
 }

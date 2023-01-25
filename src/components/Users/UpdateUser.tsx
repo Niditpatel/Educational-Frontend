@@ -58,9 +58,11 @@ export default function UpdateUser(props: any) {
     if (res.success === 1) {
       setAPIsuccess(res.message);
       handleLoading(false);
+      props.viewUpdatedData(true);
     } else {
       setAPIerror(res.message);
       handleLoading(false);
+      props.viewUpdatedData(false);
     }
   };
 
@@ -125,7 +127,7 @@ export default function UpdateUser(props: any) {
         methods.setValue("role", { label: user.role, value: user.role });
         methods.setValue("title", { label: user.title, value: user.title });
         methods.setValue("institute", {
-          label: user.institute.name,
+          label: user.institute.name.toUpperCase(),
           value: user.institute._id,
         });
       }

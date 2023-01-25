@@ -16,7 +16,7 @@ import { Get as GetDataService } from "../../CurdService";
 import { CreateUserModelSchema } from "../../models/CreateUserModel";
 import { Signup as RegisterService } from "../../AuthService";
 
-export default function CreateUser() {
+export default function CreateUser(props: any) {
   const [Title, setTitle] = useState([]);
   const [selectRoles, setselectRoles] = useState<any>([]);
   const [CahcheInstitute, setCahcheInstitute] = useState<any>([]);
@@ -56,10 +56,12 @@ export default function CreateUser() {
     if (res.success === 0) {
       handleLoading(false);
       setAPIerror(res.message);
+      props.viewCreatedData(true);
     } else {
       setAPIsuccess(res.message);
       methods.reset();
       handleLoading(false);
+      props.viewCreatedData(true);
     }
   };
 

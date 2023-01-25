@@ -10,6 +10,21 @@ import { forwardRef, useEffect } from "react";
 //   </components.Control>
 // );
 
+const label = (label: any) => ({
+  alignItems: "center",
+  display: "flex",
+
+  ":before": {
+    borderRadius: 10,
+    content: label,
+    display: "inline-block",
+    textTransform: "uppercase",
+    marginRight: 8,
+    marginLeft: 4,
+    height: 24,
+  },
+});
+
 const selectStyles = {
   menu: (provided: any) => ({
     ...provided,
@@ -43,6 +58,11 @@ const SingleSelect = forwardRef(
     const registration = methods.register(fieldname);
     const { fieldState } = useController({ name: fieldname });
     let error = fieldState?.error;
+
+    var floatingLabel = "'" + fieldname + " ==>" + "'";
+
+    const { singleValue, ...restStyle } = selectStyles;
+
     return (
       <>
         <div className="flex mt-5 w-full space-x-2">
@@ -55,8 +75,15 @@ const SingleSelect = forwardRef(
                   isSearchable={isSearchable}
                   {...field}
                   options={options}
-                  styles={selectStyles}
-                  // components={{ Control }}
+                  isClearable
+                  styles={{
+                    singleValue: (provided: any) => ({
+                      ...provided,
+                      ...label(floatingLabel),
+                      color: "#274472",
+                    }),
+                    ...restStyle,
+                  }}
                   {...rest}
                 />
               )}
@@ -89,6 +116,11 @@ export function AsyncSingleSelect({
   let error = fieldState?.error;
   const fieldsValue = methods.getValues(fieldname);
   const defaultOptions = fieldsValue !== null ? instituteDefaultOptions : [];
+
+  var floatingLabel = "'" + fieldname + " ==>" + "'";
+
+  const { singleValue, ...restStyle } = selectStyles;
+
   return (
     <>
       <div className="flex mt-5 w-full space-x-2">
@@ -105,7 +137,14 @@ export function AsyncSingleSelect({
                 loadOptions={loadOptions}
                 getOptionValue={(option: any) => option.value}
                 getOptionLabel={(option: any) => option.label}
-                styles={selectStyles}
+                styles={{
+                  singleValue: (provided: any) => ({
+                    ...provided,
+                    ...label(floatingLabel),
+                    color: "#274472",
+                  }),
+                  ...restStyle,
+                }}
                 {...rest}
                 noOptionsMessage={({ inputValue }) =>
                   !inputValue

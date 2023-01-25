@@ -5,7 +5,7 @@ import App from "./App";
 import Fallback from "./components/common/Fallback";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { RouteGuard } from "./RouteGuard";
+import { RouteAdminGuard, RouteGuard, RouteSchoolGuard } from "./RouteGuard";
 import ErrorPage from "./components/common/ErrorPage/ErrorPage";
 import Profile from "./components/Profile.tsx/Profile";
 const LandingPage = lazy(() => import("./components/Landingpage/LandingPage"));
@@ -99,17 +99,21 @@ root.render(
           <Route
             path="/users"
             element={
-              <Suspense fallback={<Fallback />}>
-                <Users />
-              </Suspense>
+              <RouteSchoolGuard>
+                <Suspense fallback={<Fallback />}>
+                  <Users />
+                </Suspense>
+              </RouteSchoolGuard>
             }
           ></Route>
           <Route
             path="/institutes"
             element={
-              <Suspense fallback={<Fallback />}>
-                <Institutes />
-              </Suspense>
+              <RouteAdminGuard>
+                <Suspense fallback={<Fallback />}>
+                  <Institutes />
+                </Suspense>
+              </RouteAdminGuard>
             }
           ></Route>
           <Route

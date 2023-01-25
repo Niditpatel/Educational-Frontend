@@ -35,7 +35,22 @@ export default function Users() {
     offset: 0,
   });
 
+  const [LoggedUser, setLoggedUser] = useState<any>();
+
   const { handleLoading } = useOutletContext<any>();
+
+  const [columnVisibility, setcolumnVisibility] = useState({
+    col_id: false,
+    col_firstname: false,
+    col_lastname: false,
+    col_email: false,
+    col_role: false,
+    col_title: false,
+    col_institutte_id: false,
+    col_institute: false,
+    col_action: false,
+  });
+  const [viewNewData, setviewNewData] = useState(false);
 
   const methods = useForm({
     mode: "onChange",
@@ -44,8 +59,8 @@ export default function Users() {
       query: null,
       limit: 5,
       offset: 0,
-      search_schools: null || [],
-      role: null || [],
+      search_schools: [],
+      role: [],
     },
   });
 
@@ -76,7 +91,7 @@ export default function Users() {
       setCount(Math.ceil(parseInt(res.count) / methods.getValues("limit")));
     }
     return true;
-  }, [limitAndOffset]);
+  }, [limitAndOffset, DeleteUserRespone, viewNewData]);
 
   const onSubmit = async (data: any) => {
     const token = sessionStorage.getItem("Access");
@@ -130,7 +145,18 @@ export default function Users() {
     });
   }
 
+  const HandleNewData = (value: boolean) => {
+    if (viewNewData === true) setviewNewData(false);
+    else setviewNewData(value);
+  };
+
   useEffect(() => {
+    handleLoading(true);
+
+    const user: any = sessionStorage.getItem("User");
+    const logUser = user !== null ? JSON.parse(user) : user;
+    setLoggedUser(logUser);
+
     const token = sessionStorage.getItem("Access");
 
     const query = sessionStorage.getItem("query");
@@ -142,8 +168,12 @@ export default function Users() {
     if (query !== null && query !== undefined) {
       methods.setValue("query", JSON.parse(query));
     }
-
-    handleLoading(true);
+    if (limit !== null && limit !== undefined) {
+      methods.setValue("limit", JSON.parse(limit));
+    }
+    if (offset !== null && offset !== undefined) {
+      methods.setValue("offset", JSON.parse(offset));
+    }
 
     GetDataService("roles", token, {}).then((res) => {
       handleLoading(false);
@@ -181,7 +211,9 @@ export default function Users() {
         setCount(Math.ceil(parseInt(res.count) / 5));
       }
     });
-  }, [DeleteUserRespone]);
+
+    return handleLoading(false);
+  }, []);
   return (
     <>
       <div className="">
@@ -189,8 +221,8 @@ export default function Users() {
           <div className="capitalize text-lg">Users</div>
           <FormProvider {...methods}>
             <form onSubmit={methods.handleSubmit(onSubmit)}>
-              <div className=" mt-5 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-                <div>
+              <div className=" mt-5 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+                <div className="w-full pr-4">
                   <label htmlFor="" className="capitalize">
                     search
                   </label>
@@ -198,12 +230,20 @@ export default function Users() {
                   <input
                     type="text"
                     id=""
-                    className="border rounded light1-placeholder w-full p-4 max-w-[459px] focus:outline-none"
+                    className="border rounded light1-placeholder w-full p-4  focus:outline-none"
                     placeholder="Search..."
                     {...methods.register("query")}
                   />
                 </div>
-                <div>
+                <div
+                  className={`${
+                    LoggedUser
+                      ? LoggedUser.role === "SuperAdmin"
+                        ? "show"
+                        : "hidden"
+                      : "hidden"
+                  }`}
+                >
                   <label htmlFor="" className="capitalize">
                     institution
                   </label>
@@ -229,7 +269,7 @@ export default function Users() {
                   />
                 </div>
               </div>
-              <div className="flex justify-between mt-3">
+              <div className="flex flex-col space-y-4 md:flex-row md:justify-between  mt-5 md:mt-3">
                 <div className="flex space-x-8">
                   <button
                     type="submit"
@@ -263,50 +303,354 @@ export default function Users() {
                 </div>
               </div>
               <div>
-                <div className="flex my-5 justify-between">
+                <div className="flex my-5 items-center justify-between">
                   <div>
-                    Showing 0-5 of 5 results
-                    {/* {methods.getValues("offset") *
-                      (methods.getValues("limit") + 1)}{" "}
-                    -{" "}
-                    {(methods.getValues("offset") + 1) *
-                      methods.getValues("limit")}
-                    of {parseInt(Count) * 5} results */}
+                    {limitAndOffset.offset * limitAndOffset.limit}-{" "}
+                    {(limitAndOffset.offset + 1) * limitAndOffset.limit}
+                    of {parseInt(Count) * limitAndOffset.limit} results
                   </div>
-                  <div>check box drop down of columns</div>
+                  <div>
+                    <div className="flex justify-center">
+                      <div>
+                        <div className="dropdown relative">
+                          <button
+                            className=" dropdown-toggle px-6 py-2 bg-primary text-white font-medium capitalize shadow-md focus:outline-none focus:ring-0 transition duration-150
+                             ease-in-out flex items-center whitespace-nowrap"
+                            type="button"
+                            id="ColumnDropDownForUser"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                          >
+                            Column
+                          </button>
+                          <ul
+                            className=" dropdown-menu min-w-max h-32 border overflow-auto absolute hidden bg-white text-base z-20 float-left py-2 list-none
+                             text-left   shadow-lg mt-1 m-0 bg-clip-padding "
+                            aria-labelledby="ColumnDropDownForUSer"
+                          >
+                            <li className="px-2 py-0.5 w-full">
+                              <div className="dropdown-item flex space-x-2 w-full">
+                                <input
+                                  type="checkbox"
+                                  className="text-primary w-fit border-primary "
+                                  onChange={(e) => {
+                                    setcolumnVisibility({
+                                      ...columnVisibility,
+                                      col_id: e.target.checked,
+                                    });
+                                  }}
+                                />
+                                <label htmlFor="">id</label>
+                              </div>
+                            </li>
+                            <li className="px-2 py-0.5 w-full">
+                              <div className="dropdown-item flex space-x-2 w-full">
+                                <input
+                                  type="checkbox"
+                                  onChange={(e) => {
+                                    setcolumnVisibility({
+                                      ...columnVisibility,
+                                      col_firstname: e.target.checked,
+                                    });
+                                  }}
+                                />
+                                <label htmlFor="">Fisrt Name</label>
+                              </div>
+                            </li>
+                            <li className="px-2 py-0.5 w-full">
+                              <div className="dropdown-item flex space-x-2 w-full">
+                                <input
+                                  type="checkbox"
+                                  onChange={(e) => {
+                                    setcolumnVisibility({
+                                      ...columnVisibility,
+                                      col_lastname: e.target.checked,
+                                    });
+                                  }}
+                                />
+                                <label htmlFor="">Last Name</label>
+                              </div>
+                            </li>
+                            <li className="px-2 py-0.5 w-full">
+                              <div className="dropdown-item flex space-x-2 w-full">
+                                <input
+                                  type="checkbox"
+                                  onChange={(e) => {
+                                    setcolumnVisibility({
+                                      ...columnVisibility,
+                                      col_email: e.target.checked,
+                                    });
+                                  }}
+                                />
+                                <label htmlFor="">Email</label>
+                              </div>
+                            </li>
+                            <li className="px-2 py-0.5 w-full">
+                              <div className="dropdown-item flex space-x-2 w-full">
+                                <input
+                                  type="checkbox"
+                                  onChange={(e) => {
+                                    setcolumnVisibility({
+                                      ...columnVisibility,
+                                      col_role: e.target.checked,
+                                    });
+                                  }}
+                                />
+                                <label htmlFor="">Role</label>
+                              </div>
+                            </li>
+                            {LoggedUser && (
+                              <>
+                                {LoggedUser.role === "SuperAdmin" && (
+                                  <>
+                                    <li className="px-2 py-0.5 w-full">
+                                      <div className="dropdown-item flex space-x-2 w-full">
+                                        <input
+                                          type="checkbox"
+                                          onChange={(e) => {
+                                            setcolumnVisibility({
+                                              ...columnVisibility,
+                                              col_institutte_id:
+                                                e.target.checked,
+                                            });
+                                          }}
+                                        />
+                                        <label htmlFor="">Institute Id</label>
+                                      </div>
+                                    </li>
+                                    <li className="px-2 py-0.5 w-full">
+                                      <div className="dropdown-item flex space-x-2 w-full">
+                                        <input
+                                          type="checkbox"
+                                          onChange={(e) => {
+                                            setcolumnVisibility({
+                                              ...columnVisibility,
+                                              col_institute: e.target.checked,
+                                            });
+                                          }}
+                                        />
+                                        <label htmlFor="">Institute</label>
+                                      </div>
+                                    </li>
+                                  </>
+                                )}
+                              </>
+                            )}
+                            <li className="px-2 py-0.5 w-full">
+                              <div className="dropdown-item flex space-x-2 w-full">
+                                <input
+                                  type="checkbox"
+                                  onChange={(e) => {
+                                    setcolumnVisibility({
+                                      ...columnVisibility,
+                                      col_title: e.target.checked,
+                                    });
+                                  }}
+                                />
+                                <label htmlFor="">Title</label>
+                              </div>
+                            </li>
+                            <li className="px-2 py-0.5 w-full">
+                              <div className="dropdown-item flex space-x-2 w-full">
+                                <input
+                                  type="checkbox"
+                                  onChange={(e) => {
+                                    setcolumnVisibility({
+                                      ...columnVisibility,
+                                      col_action: e.target.checked,
+                                    });
+                                  }}
+                                />
+                                <label htmlFor="">Actions</label>
+                              </div>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="w-full">
+                <div className="w-full overflow-auto">
                   {Users.length > 0 && (
-                    <table className="border w-full">
+                    <table className="border w-full table-auto  ">
                       <thead>
                         {
                           <tr>
-                            <th className="border p-1">Id</th>
-                            <th className="border p-1">First Name</th>
-                            <th className="border p-1">Last Name</th>
-                            <th className="border p-1">Email</th>
-                            <th className="border p-1">Role</th>
-                            <th className="border p-1">Title</th>
-                            <th className="border p-1">Institute Id</th>
-                            <th className="border p-1">Institute</th>
-                            <th className="border p-1">Actions</th>
+                            <th
+                              className={`border p-1  ${
+                                columnVisibility.col_id === true
+                                  ? "hidden"
+                                  : "show"
+                              }`}
+                            >
+                              Id
+                            </th>
+                            <th
+                              className={`border p-1  ${
+                                columnVisibility.col_firstname === true
+                                  ? "hidden"
+                                  : "show"
+                              }`}
+                            >
+                              First Name
+                            </th>
+                            <th
+                              className={`border p-1  ${
+                                columnVisibility.col_lastname === true
+                                  ? "hidden"
+                                  : "show"
+                              }`}
+                            >
+                              Last Name
+                            </th>
+                            <th
+                              className={`border p-1  ${
+                                columnVisibility.col_email === true
+                                  ? "hidden"
+                                  : "show"
+                              }`}
+                            >
+                              Email
+                            </th>
+                            <th
+                              className={`border p-1 col_role ${
+                                columnVisibility.col_role === true
+                                  ? "hidden"
+                                  : "show"
+                              }`}
+                            >
+                              Role
+                            </th>
+                            <th
+                              className={`border p-1  ${
+                                columnVisibility.col_title === true
+                                  ? "hidden"
+                                  : "show"
+                              }`}
+                            >
+                              Title
+                            </th>
+
+                            {LoggedUser.role === "SuperAdmin" && (
+                              <>
+                                <th
+                                  className={`border p-1  ${
+                                    columnVisibility.col_institutte_id === true
+                                      ? "hidden"
+                                      : "show"
+                                  }`}
+                                >
+                                  Institute Id
+                                </th>
+                                <th
+                                  className={`border p-1  ${
+                                    columnVisibility.col_institute === true
+                                      ? "hidden"
+                                      : "show"
+                                  }`}
+                                >
+                                  Institute
+                                </th>
+                              </>
+                            )}
+                            <th
+                              className={`border p-1  ${
+                                columnVisibility.col_action === true
+                                  ? "hidden"
+                                  : "show"
+                              }`}
+                            >
+                              Actions
+                            </th>
                           </tr>
                         }
                       </thead>
                       <tbody>
                         {Users.map((item: any) => (
-                          <tr key={item.email} className="border">
-                            <td className="border p-1">{item._id}</td>
-                            <td className="border p-1">{item.firstName}</td>
-                            <td className="border p-1">{item.lastName}</td>
-                            <td className="border p-1">{item.email}</td>
-                            <td className="border p-1">{item.role}</td>
-                            <td className="border p-1">{item.title}</td>
-                            <td className="border p-1">{item.institute._id}</td>
-                            <td className="border p-1">
-                              {item.institute.name}
+                          <tr key={item.email} className="border capitalize">
+                            <td
+                              className={`border p-1 ${
+                                columnVisibility.col_id === true
+                                  ? "hidden"
+                                  : "show"
+                              }`}
+                            >
+                              {item._id}
                             </td>
-                            <td>
+                            <td
+                              className={`border p-1 ${
+                                columnVisibility.col_firstname === true
+                                  ? "hidden"
+                                  : "show"
+                              }`}
+                            >
+                              {item.firstName}
+                            </td>
+                            <td
+                              className={`border p-1  ${
+                                columnVisibility.col_lastname === true
+                                  ? "hidden"
+                                  : "show"
+                              }`}
+                            >
+                              {item.lastName}
+                            </td>
+                            <td
+                              className={`border p-1   ${
+                                columnVisibility.col_email === true
+                                  ? "hidden"
+                                  : "show"
+                              }`}
+                            >
+                              {item.email}
+                            </td>
+                            <td
+                              className={`border p-1 ${
+                                columnVisibility.col_role === true
+                                  ? "hidden"
+                                  : "show"
+                              }`}
+                            >
+                              {item.role}
+                            </td>
+                            <td
+                              className={`border p-1 ${
+                                columnVisibility.col_title === true
+                                  ? "hidden"
+                                  : "show"
+                              } `}
+                            >
+                              {item.title}
+                            </td>
+                            {LoggedUser.role === "SuperAdmin" && (
+                              <>
+                                <td
+                                  className={`border p-1 ${
+                                    columnVisibility.col_institutte_id === true
+                                      ? "hidden"
+                                      : "show"
+                                  }`}
+                                >
+                                  {item.institute._id}
+                                </td>
+                                <td
+                                  className={`border p-1  ${
+                                    columnVisibility.col_institute === true
+                                      ? "hidden"
+                                      : "show"
+                                  }`}
+                                >
+                                  {item.institute.name}
+                                </td>
+                              </>
+                            )}
+                            <td
+                              className={`col_action ${
+                                columnVisibility.col_action === true
+                                  ? "hidden"
+                                  : "show"
+                              }`}
+                            >
                               <div className="flex ">
                                 <button
                                   className="mx-2 "
@@ -410,7 +754,7 @@ export default function Users() {
                         methods.setValue("offset", 0);
                         sessionStorage.setItem("offset", "0");
                         setlimitAndOffset({
-                          ...limitAndOffset,
+                          offset: 0,
                           limit: parseInt(e.target.value),
                         });
                       }}
@@ -491,8 +835,10 @@ export default function Users() {
               </button>
             </div>
           )}
-          {action === "new" && <CreateUser />}
-          {action === "edit" && <UpdateUser userId={ActionUserid} />}
+          {action === "new" && <CreateUser viewCreatedData={HandleNewData} />}
+          {action === "edit" && (
+            <UpdateUser userId={ActionUserid} viewUpdatedData={HandleNewData} />
+          )}
         </div>
       </div>
     </>
