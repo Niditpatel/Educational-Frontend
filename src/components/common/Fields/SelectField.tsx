@@ -1,14 +1,7 @@
-import Select, { components } from "react-select";
+import Select from "react-select";
 import AsyncSelect from "react-select/async";
 import { Controller, useFormContext, useController } from "react-hook-form";
 import { forwardRef, useEffect } from "react";
-// import { BsArrowRight } from "react-icons/bs";
-
-// const Control = ({ children, ...props }: any) => (
-//   <components.Control {...props}>
-//     Title <BsArrowRight className="ml-2" /> {children}
-//   </components.Control>
-// );
 
 const label = (label: any) => ({
   alignItems: "center",

@@ -1,4 +1,3 @@
-import spin from "../../Images/spin.png";
 export default function Fallback() {
   return (
     <>

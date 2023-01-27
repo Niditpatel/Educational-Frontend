@@ -13,23 +13,23 @@ const LandingPageContent = lazy(
   () => import("./components/Landingpage/LandingPageContant")
 );
 const Login = lazy(() => import("./components/Login/Login"));
-const Signup = lazy(() => import("./components/Signup/signup"));
+const Signup = lazy(() => import("./components/common/Signup/signup"));
 
 const ResetPassword = lazy(
-  () => import("./components/common/ResetPassword/ResetPassowrd")
+  () => import("./components/ResetPassword/ResetPassowrd")
 );
 const ForgotPassword = lazy(
-  () => import("./components/common/ForgotPassword/ForgotPassword")
+  () => import("./components/ForgotPassword/ForgotPassword")
 );
 const Administration = lazy(() => import("./components/Admin/Adminitration"));
-const Class = lazy(() => import("./components/Class/Class"));
-const Assets = lazy(() => import("./components/Assets/Assets"));
-const Institutes = lazy(() => import("./components/Institutes/Institutes"));
-const Users = lazy(() => import("./components/Users/users"));
+const Class = lazy(() => import("./components/Admin/Class/Class"));
+const Assets = lazy(() => import("./components/Admin/Assets/Assets"));
+const Institutes = lazy(() => import("./components/Admin/Institutes/Institutes"));
+const Users = lazy(() => import("./components/Admin/Users/users"));
 const ActiveAccount = lazy(
-  () => import("./components/common/ActiveAccount/Index")
+  () => import("./components/ActiveAccount/Index")
 );
-const VerifyAccount = lazy(() => import("./components/common/VerifyAccount"));
+const VerifyAccount = lazy(() => import("./components/VerifyAccount"));
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );

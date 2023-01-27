@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
+
 import Footer from "../common/Footer";
 import Header from "../common/Header";
 import Navbar from "../common/Navbar";
 import { LogUserContextProvider } from "../Login/LogUserContext";
-import { useState } from "react";
+
 export default function LandingPage() {
   const [Loguser, setLoguser] = useState(null);
   const [Loading, setLoading] = useState(false);

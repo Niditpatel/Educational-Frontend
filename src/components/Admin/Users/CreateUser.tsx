@@ -4,17 +4,17 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 
-import { AsyncSingleSelect, SingleSelect } from "../common/Fields/SelectField";
-import TextField from "../common/Fields/TextField";
+import { AsyncSingleSelect, SingleSelect } from "../../common/Fields/SelectField";
+import TextField from "../../common/Fields/TextField";
 
 import {
   GetTitles as GetTitlesService,
   GetInstitutes as GetInstitutesService,
-} from "../../GetDataService";
-import { Get as GetDataService } from "../../CurdService";
+} from "../../../GetDataService";
+import { Get as GetDataService } from "../../../CurdService";
 
-import { CreateUserModelSchema } from "../../models/CreateUserModel";
-import { Signup as RegisterService } from "../../AuthService";
+import { CreateUserModelSchema } from "../../../models/CreateUserModel";
+import { Signup as RegisterService } from "../../../AuthService";
 
 export default function CreateUser(props: any) {
   const [Title, setTitle] = useState([]);

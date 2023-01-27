@@ -1,12 +1,15 @@
-import TextField from "../Fields/TextField";
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+
 import { useState } from "react";
-import { ForgotPassword as ForgotPasswordService } from "../../../AuthService";
-import { ForgotPasswordSchema } from "../../../models/ForgotPasswordModel";
-import { AiOutlineWarning } from "react-icons/ai";
-import forgotpassword from "../../../Images/forgotpassword.jpg";
 import { Link } from "react-router-dom";
+
+import TextField from "../common/Fields/TextField";
+import { ForgotPassword as ForgotPasswordService } from "../../AuthService";
+import { ForgotPasswordSchema } from "../../models/ForgotPasswordModel";
+
+import { AiOutlineWarning } from "react-icons/ai";
+import forgotpassword from "../../Images/forgotpassword.jpg";
 
 export default function ForgotPassword() {
   const [APIerror, setAPIerror] = useState("");

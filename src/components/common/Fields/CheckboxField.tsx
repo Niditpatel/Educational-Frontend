@@ -1,9 +1,11 @@
 import { useFormContext, useController } from "react-hook-form";
+
 export default function CheckboxField(props: any) {
   const methods = useFormContext();
   const registration = methods.register(props.fieldname);
   const { fieldState } = useController({ name: props.fieldname });
   let error = fieldState?.error;
+
   return (
     <>
       <div className="my-3">

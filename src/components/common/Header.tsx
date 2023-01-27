@@ -1,8 +1,12 @@
 import { CiSearch } from "react-icons/ci";
 import { ImBooks } from "react-icons/im";
+
 import { useRef } from "react";
+
 export default function Header() {
+
   const SearchButtonRef = useRef<HTMLButtonElement>(null);
+  
   return (
     <div className="container px-2">
       <div className="mt-8 flex justify-between flex-col md:flex-row space-y-4 md:space-y-0">

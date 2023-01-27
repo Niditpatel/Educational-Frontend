@@ -1,16 +1,21 @@
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+
+import { LogUserDetail } from "../Login/LogUserContext";
+
 import { FaUserClock, FaSchool } from "react-icons/fa";
 import { BsFillDisplayFill } from "react-icons/bs";
 import { ImBooks } from "react-icons/im";
-import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { LogUserDetail } from "../Login/LogUserContext";
+
 export default function Administration() {
   const [LogUser, setLogUser] = useState<LogUserDetail>();
+
   useEffect((): any => {
     const User: any = sessionStorage.getItem("User");
     if (User) setLogUser({ ...JSON.parse(User) });
     return console.log("false");
   }, []);
+
   return (
     <>
       {LogUser && (

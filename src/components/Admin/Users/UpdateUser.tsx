@@ -1,23 +1,26 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { CreateUserModelSchema } from "../../models/CreateUserModel";
 
 import { useEffect, useState } from "react";
-
 import { useOutletContext } from "react-router-dom";
 
-import { AsyncSingleSelect, SingleSelect } from "../common/Fields/SelectField";
-import TextField from "../common/Fields/TextField";
+import { CreateUserModelSchema } from "../../../models/CreateUserModel";
+
+import {
+  AsyncSingleSelect,
+  SingleSelect,
+} from "../../common/Fields/SelectField";
+import TextField from "../../common/Fields/TextField";
 
 import {
   GetTitles as GetTitlesService,
   GetInstitutes as GetInstitutesService,
-} from "../../GetDataService";
+} from "../../../GetDataService";
 import {
   Get as GetDataService,
   Update as UpdateDataService,
-} from "../../CurdService";
-import { ForgotPassword as ForgotPasswordService } from "../../AuthService";
+} from "../../../CurdService";
+import { ForgotPassword as ForgotPasswordService } from "../../../AuthService";
 
 export default function UpdateUser(props: any) {
   let userId = props.userId;
@@ -44,6 +47,7 @@ export default function UpdateUser(props: any) {
     setAPIsuccess("");
     handleLoading(true);
     const { institute, title, role, ...restData } = data;
+    // const userid = 
     const res = await UpdateDataService(
       "user/" + userId,
       {
@@ -117,9 +121,11 @@ export default function UpdateUser(props: any) {
         handleLoading(false);
       }
     });
-    GetDataService("user/" + userId, token, {}).then((res) => {
+
+    const editUserId = sessionStorage.getItem("editUserId");
+
+    GetDataService("user/" + editUserId, token, {}).then((res) => {
       if (res.success === 1) {
-        console.log(res);
         const user = res.user;
         methods.setValue("email", user.email);
         methods.setValue("firstName", user.firstName);
@@ -133,7 +139,7 @@ export default function UpdateUser(props: any) {
       }
       handleLoading(false);
     });
-  }, [props.userId]);
+  }, [userId]);
 
   return (
     <>

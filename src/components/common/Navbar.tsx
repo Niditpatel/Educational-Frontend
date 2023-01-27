@@ -1,11 +1,12 @@
-import point from "../../Images/point.svg";
+import { useEffect, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "tw-elements";
-import { AiOutlineMenu } from "react-icons/ai";
-import { useContext } from "react";
+
 import { contextLogUser } from "../Login/LogUserContext";
+
+import point from "../../Images/point.svg";
+import { AiOutlineMenu } from "react-icons/ai";
 import { IoExitOutline } from "react-icons/io5";
-import { useEffect, useState } from "react";
 import { AiOutlineUser } from "react-icons/ai";
 import { RxDashboard } from "react-icons/rx";
 
@@ -13,6 +14,7 @@ export default function Navbar() {
   const [LoggedUser, setLoggedUser] = useState<any>();
 
   const logUser = useContext(contextLogUser);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,6 +23,7 @@ export default function Navbar() {
     setLoggedUser(logUser);
   }, [logUser]);
 
+  // for logout
   function handleLogout() {
     sessionStorage.clear();
     setLoggedUser(null);

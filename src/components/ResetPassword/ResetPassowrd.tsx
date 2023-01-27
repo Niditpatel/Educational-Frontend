@@ -1,16 +1,20 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import PasswordField from "../Fields/PasswordField";
+
 import { useState, useEffect } from "react";
+import { useParams, useOutletContext } from "react-router-dom";
+
+import PasswordField from "../common/Fields/PasswordField";
+import { ResetPasswordSchema } from "../../models/ResetPasswordModel";
+
 import {
   ResetPassword as ResetPasswordService,
   CheckForResetPassword as CheckForResetPasswordService,
   RegenerateLink as RegenerateLinkService,
-} from "../../../AuthService";
-import { ResetPasswordSchema } from "../../../models/ResetPasswordModel";
+} from "../../AuthService";
+
 import { AiOutlineWarning } from "react-icons/ai";
-import resetpassword from "../../../Images/resetpassword.jpg";
-import { useParams } from "react-router-dom";
+import resetpassword from "../../Images/resetpassword.jpg";
 
 export default function ResetPassword() {
   const [APIerror, setAPIerror] = useState("");
@@ -28,8 +32,10 @@ export default function ResetPassword() {
   });
 
   const params = useParams();
+  const { handleLoading } = useOutletContext<any>();
 
   const onSubmit = async (data: any) => {
+    handleLoading(true);
     setAPIsuccess({ ...APIsuccess, message: "" });
     const res = await ResetPasswordService({
       password: data.password,
@@ -38,11 +44,14 @@ export default function ResetPassword() {
     });
     if (res.success === 0) {
       setAPIerror(res.message);
+      handleLoading(false);
     } else if (res.success === 1) {
       setAPIsuccessfinal(res.message);
+      handleLoading(false);
     }
   };
 
+  // for link expired
   const handleRegenerateLink = async () => {
     setlinkExpired({ ...linkExpired, message: "" });
     const res = await RegenerateLinkService({

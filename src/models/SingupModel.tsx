@@ -1,6 +1,6 @@
 import * as Yup from "yup";
 const SignupDetailSchema = Yup.object().shape({
-  title: Yup.object().required("title is required"),
+  title: Yup.object().required("title is required").nullable(),
   firstName: Yup.string().required("first name is required").min(2).max(15),
   lastName: Yup.string().required("last name is required").min(2).max(15),
   email: Yup.string()
@@ -17,7 +17,7 @@ const SignupDetailSchema = Yup.object().shape({
       "password should have one number, one capital and one special character"
     ),
   confirmPassword: Yup.string()
-    .required("confirmPassword is required")
+    .required("confirm Password is required")
     .min(8, "Min 8 Character is Required")
     .max(18, "Max 18 Character is Allowed")
     .matches(
@@ -26,7 +26,7 @@ const SignupDetailSchema = Yup.object().shape({
     )
     .oneOf(
       [Yup.ref("password")],
-      "confirmPassword doesn't match with the password"
+      "confirm Password doesn't match with the password"
     ),
   terms: Yup.boolean()
     .oneOf(

@@ -5,6 +5,7 @@ import {
   AiOutlineLinkedin,
   AiOutlineInstagram,
 } from "react-icons/ai";
+
 export default function Footer() {
   return (
     <div className="px-2 text-white">

@@ -1,33 +1,43 @@
-import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+
+import { useEffect, useState } from "react";
+import { useOutletContext, Link } from "react-router-dom";
+
 import { AiOutlineWarning } from "react-icons/ai";
-import TextField from "../common/Fields/TextField";
-import PasswordField from "../common/Fields/PasswordField";
-import { SingleSelect, AsyncSingleSelect } from "../common/Fields/SelectField";
+import singup from "../../../Images/singup.jpg";
+
+import TextField from "../Fields/TextField";
+import PasswordField from "../Fields/PasswordField";
+import { SingleSelect, AsyncSingleSelect } from "../Fields/SelectField";
+import CheckboxField from "../Fields/CheckboxField";
+import { SignupDetailSchema } from "../../../models/SingupModel";
+
 import {
   GetTitles as GetTitlesService,
   GetInstitutes as GetInstitutesService,
-} from "../../GetDataService";
-import { Signup as SingupService } from "../../AuthService";
-import { SignupDetailSchema } from "../../models/SingupModel";
-import { Link } from "react-router-dom";
-import CheckboxField from "../common/Fields/CheckboxField";
-import singup from "../../Images/singup.jpg";
+} from "../../../GetDataService";
+import { Signup as SingupService } from "../../../AuthService";
 
 export default function Signup() {
-  const [Titles, setTitles] = useState([]);
   const [APIerror, setAPIerror] = useState("");
   const [APIsuccess, setAPIsuccess] = useState("");
+
+  const [Titles, setTitles] = useState([]);
   const [CahcheInstitute, setCahcheInstitute] = useState<any>([]);
+
+  const { handleLoading } = useOutletContext<any>();
 
   const methods = useForm({
     mode: "onChange",
     resolver: yupResolver(SignupDetailSchema),
   });
+
+  // on singup
   const onSubmit = async (data: any) => {
     setAPIerror("");
     setAPIsuccess("");
+    handleLoading(true);
     const { confirmPassword, title, institute, terms, ...rest } = data;
     const res = await SingupService({
       ...rest,
@@ -36,13 +46,16 @@ export default function Signup() {
     });
     if (res.success === 0) {
       setAPIerror(res.message);
+      handleLoading(false);
       methods.reset();
     } else {
       setAPIsuccess(res.message);
+      handleLoading(false);
       methods.reset();
     }
   };
 
+  // for getting  institutes
   const selectInstitute = async (inputValue: string) => {
     if (inputValue.length > 2) {
       const res = await GetInstitutesService(inputValue);
@@ -55,13 +68,14 @@ export default function Signup() {
   };
 
   useEffect((): any => {
+    handleLoading(true);
     GetTitlesService().then((data) => {
       const titles = data.map((value: any) => {
         return { label: value, value: value };
       });
       setTitles(titles);
+      handleLoading(false);
     });
-    // return false;
   }, []);
 
   return (

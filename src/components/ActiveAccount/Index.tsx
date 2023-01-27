@@ -1,15 +1,19 @@
-import { ActivateAccount as ActiveAccountService } from "../../../AuthService";
-import { useParams } from "react-router-dom";
-import setpassword from "../../../Images/setpassword.png";
-import { useState, useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import PasswordField from "../Fields/PasswordField";
-import { ResetPasswordSchema } from "../../../models/ResetPasswordModel";
+
+import { useParams, useOutletContext } from "react-router-dom";
+import { useState, useEffect } from "react";
+
+import setpassword from "../../Images/setpassword.png";
+
+import PasswordField from "../common/Fields/PasswordField";
+import { ResetPasswordSchema } from "../../models/ResetPasswordModel";
+
 import {
   RegenerateLink as RegenerateLinkService,
   ResetPassword as ResetPasswordService,
-} from "../../../AuthService";
+  ActivateAccount as ActiveAccountService,
+} from "../../AuthService";
 
 export default function ActiveAccount() {
   const [APIerror, setAPIerror] = useState("");
@@ -20,7 +24,9 @@ export default function ActiveAccount() {
   });
   const [APIsuccessfinal, setAPIsuccessfinal] = useState("");
   const [linkExpired, setlinkExpired] = useState({ message: "", id: "" });
+
   const params = useParams();
+  const { handleLoading } = useOutletContext<any>();
 
   const methods = useForm({
     mode: "onChange",
@@ -29,6 +35,7 @@ export default function ActiveAccount() {
 
   const handleRegenerateLink = async () => {
     setlinkExpired({ ...linkExpired, message: "" });
+    handleLoading(true);
     const res = await RegenerateLinkService({
       isFor: "activeAccount",
       token: params.token,
@@ -36,13 +43,16 @@ export default function ActiveAccount() {
     });
     if (res.success === 1) {
       setAPIsuccessfinal(res.message);
+      handleLoading(false);
     } else if (res.success === 0) {
       setAPIerror(res.message);
+      handleLoading(false);
     }
   };
 
   const onSubmit = async (data: any) => {
     setAPIsuccess({ ...APIsuccess, message: "" });
+    handleLoading(true);
     const res = await ResetPasswordService({
       password: data.password,
       id: APIsuccess.id,
@@ -50,8 +60,10 @@ export default function ActiveAccount() {
     });
     if (res.success === 0) {
       setAPIerror(res.message);
+      handleLoading(false);
     } else if (res.success === 1) {
       setAPIsuccessfinal(res.message);
+      handleLoading(false);
     }
   };
 
@@ -66,6 +78,7 @@ export default function ActiveAccount() {
       }
     });
   }, []);
+
   return (
     <>
       <div className="container border w-full mt-4 h-full md:min-h-[400px] lg:min-h-[550px] text-primary bg-light2">

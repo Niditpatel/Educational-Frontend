@@ -1,24 +1,29 @@
-import { Login as LoginService } from "../../AuthService";
-import { AiOutlineWarning } from "react-icons/ai";
-import { useState } from "react";
-import { Link } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+
+import { useState } from "react";
+import { useOutletContext, useNavigate, Link } from "react-router-dom";
+
+import { Login as LoginService } from "../../AuthService";
+
 import TextField from "../common/Fields/TextField";
 import PasswordField from "../common/Fields/PasswordField";
-import login from "../../Images/login.jpg";
 import { LoginDetailSchema } from "../../models/LoginModel";
-import { useNavigate } from "react-router-dom";
-import { useOutletContext } from "react-router-dom";
+
+import { AiOutlineWarning } from "react-icons/ai";
+import login from "../../Images/login.jpg";
 
 export default function Login() {
   const [APIerror, setAPIerror] = useState();
+
   const navigate = useNavigate();
+  let { setLoguser, handleLoading } = useOutletContext<any>();
+
   const methods = useForm({
     mode: "onChange",
     resolver: yupResolver(LoginDetailSchema),
   });
-  let { setLoguser, handleLoading } = useOutletContext<any>();
+  
 
   const onSubmit = async (data: any) => {
     const res = await LoginService(data);

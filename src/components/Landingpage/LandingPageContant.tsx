@@ -1,8 +1,10 @@
 import "tw-elements";
+
 import education1 from "../../Images/education1.jpg";
 import eduaction2 from "../../Images/education2.jpg";
 import education3 from "../../Images/education3.jpg";
 import education4 from "../../Images/education4.jpg";
+
 export default function LandingPageContent() {
   return (
     <>

@@ -1,8 +1,10 @@
-import { VerifyAccount as VerifyAccountService } from "../../../AuthService";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import verifyemail from "../../../Images/verifyemail.jpg";
-import { useState } from "react";
-import { useEffect } from "react";
+
+import { VerifyAccount as VerifyAccountService } from "../../AuthService";
+
+import verifyemail from "../../Images/verifyemail.jpg";
+
 export default function VerifyAccount() {
   const [APIerror, setAPIerror] = useState("");
   const [APIsuccess, setAPIsuccess] = useState("");
@@ -20,6 +22,7 @@ export default function VerifyAccount() {
       }
     });
   }, []);
+
   return (
     <>
       <div className="container border w-full mt-4 h-full md:min-h-[400px] lg:min-h-[550px] text-primary bg-light2">
