@@ -10,11 +10,8 @@ export default function LandingPage() {
   const [Loguser, setLoguser] = useState(null);
   const [Loading, setLoading] = useState(false);
 
-  const handleLoading = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 3000);
+  const handleLoading = (value: boolean) => {
+    setLoading(value);
   };
   return (
     <div className="relative">

@@ -7,7 +7,7 @@ export function resizableGrid(table: any, tableId: any) {
   // table.style.overflowY = "hidden";
 
   var tableHeight = table.offsetHeight;
-  console.log(tableHeight, "tablehight");
+  // console.log(tableHeight, "tablehight");
 
   for (var i = 0; i < cols.length; i++) {
     var div = createDiv(tableHeight);
@@ -49,7 +49,7 @@ export function resizableGrid(table: any, tableId: any) {
 
         curCol.style.width = curColWidth + diffX + "px";
         const table: any = document.getElementById(tableId);
-        table.style.width = tableWidth + diffX + "px";
+        // table.style.width = tableWidth + diffX + "px";
       }
     });
 
@@ -74,7 +74,7 @@ export function resizableGrid(table: any, tableId: any) {
   }
 
   function paddingDiff(col: any) {
-    if (getStyleVal(col, "box-sizing") == "border-box") {
+    if (getStyleVal(col, "box-sizing") === "border-box") {
       return 0;
     }
 

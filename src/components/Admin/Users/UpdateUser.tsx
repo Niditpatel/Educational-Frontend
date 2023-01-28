@@ -47,9 +47,11 @@ export default function UpdateUser(props: any) {
     setAPIsuccess("");
     handleLoading(true);
     const { institute, title, role, ...restData } = data;
-    // const userid = 
+
+    const editUserId = sessionStorage.getItem("editUserId");
+
     const res = await UpdateDataService(
-      "user/" + userId,
+      "user/" + editUserId,
       {
         institute: institute.value,
         title: title.value,
@@ -66,7 +68,6 @@ export default function UpdateUser(props: any) {
     } else {
       setAPIerror(res.message);
       handleLoading(false);
-      props.viewUpdatedData(false);
     }
   };
 

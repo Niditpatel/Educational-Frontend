@@ -97,6 +97,7 @@ export default function Users() {
       setUsers([...res.data]);
       setTotalData(res.count);
       setCount(Math.ceil(parseInt(res.count) / methods.getValues("limit")));
+      handleLoading(false);
     }
     return true;
   }, [limitAndOffset, DeleteUserRespone, viewNewData]);
@@ -235,6 +236,7 @@ export default function Users() {
         if (limit !== undefined && limit !== null) {
           setTotalData(res.count);
           setCount(Math.ceil(parseInt(res.count) / parseInt(limit)));
+          console.log(res.newData, "newdata");
         } else {
           setCount(Math.ceil(parseInt(res.count) / 5));
         }
@@ -554,7 +556,7 @@ export default function Users() {
                                 First Name
                               </th>
                               <th
-                                className={`border p-1  ${
+                                className={`border p-1 whitespace-nowrap  ${
                                   columnVisibility.col_lastname === true
                                     ? "hidden"
                                     : "show"
@@ -629,7 +631,7 @@ export default function Users() {
                           {Users.map((item: any) => (
                             <tr
                               key={item.email}
-                              className="border capitalize even:bg-light2"
+                              className="border  even:bg-light2"
                             >
                               <td
                                 className={`border p-1 ${

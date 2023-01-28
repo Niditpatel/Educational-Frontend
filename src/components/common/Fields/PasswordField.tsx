@@ -30,10 +30,10 @@ export default function PasswordField({ fieldname, label, ...rest }: any) {
               placeholder={label}
               autoComplete="on"
             />
-            <label className="text-primary">{label}</label>
+            <label className="text-primary capitalize">{label}</label>
           </div>
           <label
-            className="absolute text-lg right-1 z-1 bottom-2 "
+            className="absolute text-lg right-1 z-1 bottom-3.5 "
             onClick={(e) => {
               e.preventDefault();
               HandlePasswordVisibilityToggle();

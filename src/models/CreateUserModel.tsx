@@ -4,7 +4,7 @@ const CreateUserModelSchema = Yup.object().shape({
   role: Yup.object().required("institute is required").nullable(),
   title: Yup.object().required("Title is required").nullable(),
   firstName: Yup.string().required("first name is required").min(2).max(15),
-  lastName: Yup.string().required("first name is required").min(2).max(15),
+  lastName: Yup.string().required("last name is required").min(2).max(15),
   email: Yup.string()
     .email()
     .required("email is required")

@@ -27,7 +27,9 @@ export default function Administration() {
                 LogUser.role === "SchoolAdmin") && (
                 <div className="">
                   <div className="text-6xl w-fit h-fit mx-auto text-light2   lg:text-7xl xl:text-9xl  ">
-                    <FaUserClock />
+                    <Link to={"/users"}>
+                      <FaUserClock />
+                    </Link>
                   </div>
                   <div className="w-fit h-fit mx-auto capitalize">
                     <Link to={"/users"}>users</Link>
@@ -37,7 +39,9 @@ export default function Administration() {
               {LogUser.role === "SuperAdmin" && (
                 <div className="">
                   <div className="text-6xl w-fit h-fit mx-auto text-light2   lg:text-7xl xl:text-9xl  ">
-                    <FaSchool />
+                    <Link to={"/institutes"}>
+                      <FaSchool />
+                    </Link>
                   </div>
                   <div className="w-fit h-fit mx-auto capitalize">
                     <Link to={"/institutes"}>institutes</Link>
@@ -49,7 +53,9 @@ export default function Administration() {
                 LogUser.role === "Teacher") && (
                 <div className="">
                   <div className="text-6xl w-fit h-fit mx-auto text-light2   lg:text-7xl xl:text-9xl  ">
-                    <BsFillDisplayFill />
+                    <Link to={"/classes"}>
+                      <BsFillDisplayFill />
+                    </Link>
                   </div>
                   <div className="w-fit h-fit mx-auto capitalize">
                     <Link to={"/classes"}>classes</Link>
@@ -61,14 +67,15 @@ export default function Administration() {
                 LogUser.role === "Teacher") && (
                 <div className="">
                   <div className="text-6xl w-fit h-fit mx-auto text-light2 lg:text-7xl xl:text-9xl  ">
-                    <ImBooks />
+                    <Link to={"/assets"}>
+                      <ImBooks />
+                    </Link>
                   </div>
                   <div className="w-fit h-fit mx-auto capitalize">
                     <Link to={"/assets"}>assets</Link>
                   </div>
                 </div>
               )}
-              <div>others are on the way</div>
             </div>
           </div>
         </div>

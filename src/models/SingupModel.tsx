@@ -10,20 +10,18 @@ const SignupDetailSchema = Yup.object().shape({
   institute: Yup.object().required("institute is required").nullable(),
   password: Yup.string()
     .required("password is  Required")
+    .matches(/.*[0-9].*/, "at least one number is required")
+    .matches(/(?=.*[A-Z])/, "at least one capital letter is required")
+    .matches(/(?=.*[@$!%*?&])/, "at least one special charcter is required")
     .min(8, "Min 8 Character is Required")
-    .max(18, "Max 18 Character is Allowed")
-    .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-      "password should have one number, one capital and one special character"
-    ),
+    .max(18, "Max 18 Character is Allowed"),
   confirmPassword: Yup.string()
     .required("confirm Password is required")
+    .matches(/.*[0-9].*/, "at least one number is required")
+    .matches(/(?=.*[A-Z])/, "at least one capital letter is required")
+    .matches(/(?=.*[@$!%*?&])/, "at least one special charcter is required")
     .min(8, "Min 8 Character is Required")
     .max(18, "Max 18 Character is Allowed")
-    .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-      "password should have one number, one capital and one special character"
-    )
     .oneOf(
       [Yup.ref("password")],
       "confirm Password doesn't match with the password"
