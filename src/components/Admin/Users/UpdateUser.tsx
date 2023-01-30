@@ -3,6 +3,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
+import { UseDifferentValueCheck } from "../../common/CustomHooks/UseDifferentValueCheck";
 
 import { CreateUserModelSchema } from "../../../models/CreateUserModel";
 
@@ -29,6 +30,8 @@ export default function UpdateUser(props: any) {
   const [selectRoles, setselectRoles] = useState<any>([]);
   const [CahcheInstitute, setCahcheInstitute] = useState<any>([]);
 
+  const [userData, setuserData] = useState({});
+
   const [APIerror, setAPIerror] = useState("");
   const [APIsuccess, setAPIsuccess] = useState("");
 
@@ -42,32 +45,43 @@ export default function UpdateUser(props: any) {
   });
 
   const onSubmit = async (data: any) => {
-    const token = sessionStorage.getItem("Access");
-    setAPIerror("");
-    setAPIsuccess("");
-    handleLoading(true);
-    const { institute, title, role, ...restData } = data;
+    const updatedData = {
+      role: data.role.value,
+      title: data.title.value,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      institute: data.institute.value,
+    };
+    const checkForUpdate = UseDifferentValueCheck(updatedData, userData);
+    if (checkForUpdate) {
+      const token = sessionStorage.getItem("Access");
+      setuserData(updatedData);
+      setAPIerror("");
+      setAPIsuccess("");
+      handleLoading(true);
+      const { institute, title, role, ...restData } = data;
+      const editUserId = sessionStorage.getItem("editUserId");
 
-    const editUserId = sessionStorage.getItem("editUserId");
-
-    const res = await UpdateDataService(
-      "user/" + editUserId,
-      {
-        institute: institute.value,
-        title: title.value,
-        role: role.value,
-        ...restData,
-      },
-      token,
-      {}
-    );
-    if (res.success === 1) {
-      setAPIsuccess(res.message);
-      handleLoading(false);
-      props.viewUpdatedData(true);
-    } else {
-      setAPIerror(res.message);
-      handleLoading(false);
+      const res = await UpdateDataService(
+        "user/" + editUserId,
+        {
+          institute: institute.value,
+          title: title.value,
+          role: role.value,
+          ...restData,
+        },
+        token,
+        {}
+      );
+      if (res.success === 1) {
+        setAPIsuccess(res.message);
+        handleLoading(false);
+        props.viewUpdatedData(true);
+      } else {
+        setAPIerror(res.message);
+        handleLoading(false);
+      }
     }
   };
 
@@ -128,6 +142,8 @@ export default function UpdateUser(props: any) {
     GetDataService("user/" + editUserId, token, {}).then((res) => {
       if (res.success === 1) {
         const user = res.user;
+        console.log(user, "user");
+
         methods.setValue("email", user.email);
         methods.setValue("firstName", user.firstName);
         methods.setValue("lastName", user.lastName);
@@ -136,6 +152,14 @@ export default function UpdateUser(props: any) {
         methods.setValue("institute", {
           label: user.institute.name.toUpperCase(),
           value: user.institute._id,
+        });
+        setuserData({
+          role: user.role,
+          title: user.title,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          institute: user.institute._id,
         });
       }
       handleLoading(false);
@@ -161,6 +185,7 @@ export default function UpdateUser(props: any) {
                 placeholder="Select Role"
                 required={true}
                 options={selectRoles}
+                isSearchable={false}
               />
             </div>
             <div>

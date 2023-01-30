@@ -28,14 +28,14 @@ export default function Footer() {
           gujarat, india
         </div>
         <div className="capitalize ">
-          copyright notic <br />
+          copyright notice <br />
           privacy policy <br />
           terms of use <br />
           accessibility policy <br />
           anti-slavery policy
         </div>
         <div className="capitalize border-t pt-2 border-higher2 md:border-none ">
-          ragistered in indai no. 99009900 <br />
+          registered in indai no. 99009900 <br />
           request help <br />
           contact us
           <br />

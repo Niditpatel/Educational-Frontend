@@ -13,7 +13,7 @@ const LandingPageContent = lazy(
   () => import("./components/Landingpage/LandingPageContant")
 );
 const Login = lazy(() => import("./components/Login/Login"));
-const Signup = lazy(() => import("./components/common/Signup/signup"));
+const Signup = lazy(() => import("./components/Signup/signup"));
 
 const ResetPassword = lazy(
   () => import("./components/ResetPassword/ResetPassowrd")

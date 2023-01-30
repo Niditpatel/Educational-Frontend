@@ -9,6 +9,7 @@ import { ForgotPassword as ForgotPasswordService } from "../../AuthService";
 import { ForgotPasswordSchema } from "../../models/ForgotPasswordModel";
 
 import { AiOutlineWarning } from "react-icons/ai";
+import { HiOutlineArrowNarrowLeft } from "react-icons/hi";
 import forgotpassword from "../../Images/forgotpassword.jpg";
 
 export default function ForgotPassword() {
@@ -77,15 +78,16 @@ export default function ForgotPassword() {
                   <div className="mt-6 mb-3">
                     <button
                       type="submit"
-                      className={`px-10  font-semibold border border-light1 text-lg  rounded-xl text-center subpixel-antialiased 
+                      className={`px-10  font-semibold border border-light1 text-lg  rounded-xl text-center subpixel-antialiased  capitalize
               ${methods.formState.isValid ? "text-primary" : "text-light1"}`}
                     >
                       submit
                     </button>
                   </div>
-                  <div className="">
-                    <Link to={"/login"} className="flex">
-                      <span>&larr; back to login </span>
+                  <div className="text-sm">
+                    <Link to={"/login"} className="flex items-center space-x-2">
+                      <HiOutlineArrowNarrowLeft />
+                      <span className="capitalize"> back to login </span>
                     </Link>
                   </div>
                 </div>

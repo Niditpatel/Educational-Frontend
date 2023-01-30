@@ -5,19 +5,19 @@ import { useEffect, useState } from "react";
 import { useOutletContext, Link } from "react-router-dom";
 
 import { AiOutlineWarning } from "react-icons/ai";
-import singup from "../../../Images/singup.jpg";
+import singup from "../../Images/singup.jpg";
 
-import TextField from "../Fields/TextField";
-import PasswordField from "../Fields/PasswordField";
-import { SingleSelect, AsyncSingleSelect } from "../Fields/SelectField";
-import CheckboxField from "../Fields/CheckboxField";
-import { SignupDetailSchema } from "../../../models/SingupModel";
+import TextField from "../common/Fields/TextField";
+import PasswordField from "../common/Fields/PasswordField";
+import { SingleSelect, AsyncSingleSelect } from "../common/Fields/SelectField";
+import CheckboxField from "../common/Fields/CheckboxField";
+import { SignupDetailSchema } from "../../models/SingupModel";
 
 import {
   GetTitles as GetTitlesService,
   GetInstitutes as GetInstitutesService,
-} from "../../../GetDataService";
-import { Signup as SingupService } from "../../../AuthService";
+} from "../../GetDataService";
+import { Signup as SingupService } from "../../AuthService";
 
 export default function Signup() {
   const [APIerror, setAPIerror] = useState("");
@@ -47,11 +47,10 @@ export default function Signup() {
     if (res.success === 0) {
       setAPIerror(res.message);
       handleLoading(false);
-      methods.reset();
+      // methods.reset();
     } else {
       setAPIsuccess(res.message);
       handleLoading(false);
-      methods.reset();
     }
   };
 
@@ -88,21 +87,15 @@ export default function Signup() {
             className="h-96 w-96  mx-auto lg:h-[615px] lg:w-full"
           />
         </div>
-        {APIerror.length > 0 && (
-          <div className="flex justify-center  items-center basis-1/2 ">
-            <div className="text-xl h-fit  text-secondary flex bg-warning rounded p-2 my-2">
-              <AiOutlineWarning className="text-3xl" /> {APIerror}
-            </div>
-          </div>
-        )}
+
         {APIsuccess.length > 0 && (
           <div className="flex justify-center  items-center basis-1/2 ">
-            <div className="text-xl h-fit  text-secondary flex bg-success rounded p-2 my-2">
+            <div className="text-xl h-fit  text-secondary flex bg-success rounded p-2 my-2 capitalize">
               <AiOutlineWarning className="text-3xl" /> {APIsuccess}
             </div>
           </div>
         )}
-        {APIsuccess.length === 0 && APIerror.length === 0 && (
+        {APIsuccess.length === 0 && (
           <FormProvider {...methods}>
             <form
               onSubmit={methods.handleSubmit(onSubmit)}
@@ -110,6 +103,11 @@ export default function Signup() {
             >
               <div className="  mx-auto py-2 mt-8 max-w-[420px]  ">
                 <div className="text-3xl text-center">sign up</div>
+                {APIerror.length > 0 && (
+                  <div className="text-xl h-fit  text-secondary flex bg-warning rounded p-2 my-2 capitalize">
+                    <AiOutlineWarning className="text-3xl" /> {APIerror}
+                  </div>
+                )}
                 <AsyncSingleSelect
                   placeholder="Search Institute"
                   fieldname="institute"

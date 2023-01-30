@@ -351,179 +351,182 @@ export default function Users() {
                 </div>
               </div>
               <div>
-                <div className="flex my-5 items-center justify-between">
-                  <div>
-                    showing{" "}
-                    {methods.getValues("offset") * methods.getValues("limit")} -{" "}
-                    {TotalData <
-                    (methods.getValues("offset") + 1) *
-                      methods.getValues("limit")
-                      ? TotalData
-                      : (methods.getValues("offset") + 1) *
-                        methods.getValues("limit")}{" "}
-                    of {TotalData} results
-                  </div>
-                  <div>
-                    <div className="flex justify-center">
-                      <div>
-                        <div className="dropdown relative">
-                          <button
-                            className=" dropdown-toggle px-6 py-2 bg-primary text-white font-medium capitalize shadow-md focus:outline-none focus:ring-0 transition duration-150
+                {Users.length !== 0 && (
+                  <div className="flex my-5 items-center justify-between">
+                    <div>
+                      showing{" "}
+                      {methods.getValues("offset") * methods.getValues("limit")}{" "}
+                      -{" "}
+                      {TotalData <
+                      (methods.getValues("offset") + 1) *
+                        methods.getValues("limit")
+                        ? TotalData
+                        : (methods.getValues("offset") + 1) *
+                          methods.getValues("limit")}{" "}
+                      of {TotalData} results
+                    </div>
+                    <div>
+                      <div className="flex justify-center">
+                        <div>
+                          <div className="dropdown relative">
+                            <button
+                              className=" dropdown-toggle px-6 py-2 bg-primary text-white font-medium capitalize shadow-md focus:outline-none focus:ring-0 transition duration-150
                              ease-in-out flex items-center whitespace-nowrap"
-                            type="button"
-                            id="ColumnDropDownForUser"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
-                          >
-                            Column
-                          </button>
-                          <ul
-                            className=" dropdown-menu min-w-max h-32 border overflow-auto absolute hidden bg-white text-base z-20 float-left py-2 list-none
+                              type="button"
+                              id="ColumnDropDownForUser"
+                              data-bs-toggle="dropdown"
+                              aria-expanded="false"
+                            >
+                              Column
+                            </button>
+                            <ul
+                              className=" dropdown-menu min-w-max h-32 border overflow-auto absolute hidden bg-white text-base z-20 float-left py-2 list-none
                              text-left   shadow-lg mt-1 m-0 bg-clip-padding "
-                            aria-labelledby="ColumnDropDownForUSer"
-                          >
-                            <li className="px-2 py-0.5 w-full">
-                              <div className="dropdown-item flex space-x-2 w-full">
-                                <input
-                                  type="checkbox"
-                                  className="text-primary w-fit border-primary "
-                                  onChange={(e) => {
-                                    setcolumnVisibility({
-                                      ...columnVisibility,
-                                      col_id: e.target.checked,
-                                    });
-                                  }}
-                                />
-                                <label htmlFor="">id</label>
-                              </div>
-                            </li>
-                            <li className="px-2 py-0.5 w-full">
-                              <div className="dropdown-item flex space-x-2 w-full">
-                                <input
-                                  type="checkbox"
-                                  onChange={(e) => {
-                                    setcolumnVisibility({
-                                      ...columnVisibility,
-                                      col_firstname: e.target.checked,
-                                    });
-                                  }}
-                                />
-                                <label htmlFor="">Fisrt Name</label>
-                              </div>
-                            </li>
-                            <li className="px-2 py-0.5 w-full">
-                              <div className="dropdown-item flex space-x-2 w-full">
-                                <input
-                                  type="checkbox"
-                                  onChange={(e) => {
-                                    setcolumnVisibility({
-                                      ...columnVisibility,
-                                      col_lastname: e.target.checked,
-                                    });
-                                  }}
-                                />
-                                <label htmlFor="">Last Name</label>
-                              </div>
-                            </li>
-                            <li className="px-2 py-0.5 w-full">
-                              <div className="dropdown-item flex space-x-2 w-full">
-                                <input
-                                  type="checkbox"
-                                  onChange={(e) => {
-                                    setcolumnVisibility({
-                                      ...columnVisibility,
-                                      col_email: e.target.checked,
-                                    });
-                                  }}
-                                />
-                                <label htmlFor="">Email</label>
-                              </div>
-                            </li>
-                            <li className="px-2 py-0.5 w-full">
-                              <div className="dropdown-item flex space-x-2 w-full">
-                                <input
-                                  type="checkbox"
-                                  onChange={(e) => {
-                                    setcolumnVisibility({
-                                      ...columnVisibility,
-                                      col_role: e.target.checked,
-                                    });
-                                  }}
-                                />
-                                <label htmlFor="">Role</label>
-                              </div>
-                            </li>
-                            {LoggedUser && (
-                              <>
-                                {LoggedUser.role === "SuperAdmin" && (
-                                  <>
-                                    <li className="px-2 py-0.5 w-full">
-                                      <div className="dropdown-item flex space-x-2 w-full">
-                                        <input
-                                          type="checkbox"
-                                          onChange={(e) => {
-                                            setcolumnVisibility({
-                                              ...columnVisibility,
-                                              col_institutte_id:
-                                                e.target.checked,
-                                            });
-                                          }}
-                                        />
-                                        <label htmlFor="">Institute Id</label>
-                                      </div>
-                                    </li>
-                                    <li className="px-2 py-0.5 w-full">
-                                      <div className="dropdown-item flex space-x-2 w-full">
-                                        <input
-                                          type="checkbox"
-                                          onChange={(e) => {
-                                            setcolumnVisibility({
-                                              ...columnVisibility,
-                                              col_institute: e.target.checked,
-                                            });
-                                          }}
-                                        />
-                                        <label htmlFor="">Institute</label>
-                                      </div>
-                                    </li>
-                                  </>
-                                )}
-                              </>
-                            )}
-                            <li className="px-2 py-0.5 w-full">
-                              <div className="dropdown-item flex space-x-2 w-full">
-                                <input
-                                  type="checkbox"
-                                  onChange={(e) => {
-                                    setcolumnVisibility({
-                                      ...columnVisibility,
-                                      col_title: e.target.checked,
-                                    });
-                                  }}
-                                />
-                                <label htmlFor="">Title</label>
-                              </div>
-                            </li>
-                            <li className="px-2 py-0.5 w-full">
-                              <div className="dropdown-item flex space-x-2 w-full">
-                                <input
-                                  type="checkbox"
-                                  onChange={(e) => {
-                                    setcolumnVisibility({
-                                      ...columnVisibility,
-                                      col_action: e.target.checked,
-                                    });
-                                  }}
-                                />
-                                <label htmlFor="">Actions</label>
-                              </div>
-                            </li>
-                          </ul>
+                              aria-labelledby="ColumnDropDownForUSer"
+                            >
+                              <li className="px-2 py-0.5 w-full">
+                                <div className="dropdown-item flex space-x-2 w-full">
+                                  <input
+                                    type="checkbox"
+                                    className="text-primary w-fit border-primary "
+                                    onChange={(e) => {
+                                      setcolumnVisibility({
+                                        ...columnVisibility,
+                                        col_id: e.target.checked,
+                                      });
+                                    }}
+                                  />
+                                  <label htmlFor="">id</label>
+                                </div>
+                              </li>
+                              <li className="px-2 py-0.5 w-full">
+                                <div className="dropdown-item flex space-x-2 w-full">
+                                  <input
+                                    type="checkbox"
+                                    onChange={(e) => {
+                                      setcolumnVisibility({
+                                        ...columnVisibility,
+                                        col_firstname: e.target.checked,
+                                      });
+                                    }}
+                                  />
+                                  <label htmlFor="">Fisrt Name</label>
+                                </div>
+                              </li>
+                              <li className="px-2 py-0.5 w-full">
+                                <div className="dropdown-item flex space-x-2 w-full">
+                                  <input
+                                    type="checkbox"
+                                    onChange={(e) => {
+                                      setcolumnVisibility({
+                                        ...columnVisibility,
+                                        col_lastname: e.target.checked,
+                                      });
+                                    }}
+                                  />
+                                  <label htmlFor="">Last Name</label>
+                                </div>
+                              </li>
+                              <li className="px-2 py-0.5 w-full">
+                                <div className="dropdown-item flex space-x-2 w-full">
+                                  <input
+                                    type="checkbox"
+                                    onChange={(e) => {
+                                      setcolumnVisibility({
+                                        ...columnVisibility,
+                                        col_email: e.target.checked,
+                                      });
+                                    }}
+                                  />
+                                  <label htmlFor="">Email</label>
+                                </div>
+                              </li>
+                              <li className="px-2 py-0.5 w-full">
+                                <div className="dropdown-item flex space-x-2 w-full">
+                                  <input
+                                    type="checkbox"
+                                    onChange={(e) => {
+                                      setcolumnVisibility({
+                                        ...columnVisibility,
+                                        col_role: e.target.checked,
+                                      });
+                                    }}
+                                  />
+                                  <label htmlFor="">Role</label>
+                                </div>
+                              </li>
+                              {LoggedUser && (
+                                <>
+                                  {LoggedUser.role === "SuperAdmin" && (
+                                    <>
+                                      <li className="px-2 py-0.5 w-full">
+                                        <div className="dropdown-item flex space-x-2 w-full">
+                                          <input
+                                            type="checkbox"
+                                            onChange={(e) => {
+                                              setcolumnVisibility({
+                                                ...columnVisibility,
+                                                col_institutte_id:
+                                                  e.target.checked,
+                                              });
+                                            }}
+                                          />
+                                          <label htmlFor="">Institute Id</label>
+                                        </div>
+                                      </li>
+                                      <li className="px-2 py-0.5 w-full">
+                                        <div className="dropdown-item flex space-x-2 w-full">
+                                          <input
+                                            type="checkbox"
+                                            onChange={(e) => {
+                                              setcolumnVisibility({
+                                                ...columnVisibility,
+                                                col_institute: e.target.checked,
+                                              });
+                                            }}
+                                          />
+                                          <label htmlFor="">Institute</label>
+                                        </div>
+                                      </li>
+                                    </>
+                                  )}
+                                </>
+                              )}
+                              <li className="px-2 py-0.5 w-full">
+                                <div className="dropdown-item flex space-x-2 w-full">
+                                  <input
+                                    type="checkbox"
+                                    onChange={(e) => {
+                                      setcolumnVisibility({
+                                        ...columnVisibility,
+                                        col_title: e.target.checked,
+                                      });
+                                    }}
+                                  />
+                                  <label htmlFor="">Title</label>
+                                </div>
+                              </li>
+                              <li className="px-2 py-0.5 w-full">
+                                <div className="dropdown-item flex space-x-2 w-full">
+                                  <input
+                                    type="checkbox"
+                                    onChange={(e) => {
+                                      setcolumnVisibility({
+                                        ...columnVisibility,
+                                        col_action: e.target.checked,
+                                      });
+                                    }}
+                                  />
+                                  <label htmlFor="">Actions</label>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
                 <div className="">
                   <div
                     className="conatiner py-1 overflow-x-auto  overflow-y-hidden "
@@ -547,7 +550,7 @@ export default function Users() {
                                 Id
                               </th>
                               <th
-                                className={`border p-1  ${
+                                className={`border p-1 whitespace-nowrap ${
                                   columnVisibility.col_firstname === true
                                     ? "hidden"
                                     : "show"
@@ -643,7 +646,7 @@ export default function Users() {
                                 {item._id}
                               </td>
                               <td
-                                className={`border p-1 ${
+                                className={`border p-1  ${
                                   columnVisibility.col_firstname === true
                                     ? "hidden"
                                     : "show"
@@ -697,7 +700,7 @@ export default function Users() {
                                         : "show"
                                     }`}
                                   >
-                                    {item.institute._id}
+                                    {item.instituteId}
                                   </td>
                                   <td
                                     className={`border p-1  ${
@@ -706,7 +709,7 @@ export default function Users() {
                                         : "show"
                                     }`}
                                   >
-                                    {item.institute.name}
+                                    {item.institute}
                                   </td>
                                 </>
                               )}
@@ -752,96 +755,108 @@ export default function Users() {
                     )}
                     {Users.length === 0 && (
                       <>
-                        <div>There is No Data To show</div>
+                        <div className="capitalize w-full  text-center text-3xl mt-10">
+                          There is No Data To show
+                        </div>
                       </>
                     )}
                   </div>
                 </div>
-                <div className="flex my-5 justify-between">
-                  <div>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        const offset = methods.getValues("offset");
-                        if (offset > 0) {
-                          methods.setValue("offset", offset - 1);
-                          sessionStorage.setItem(
-                            "offset",
-                            (offset - 1).toString()
-                          );
+                {Users.length !== 0 && (
+                  <div className="flex my-5 justify-between">
+                    <div>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          const offset = methods.getValues("offset");
+                          if (offset > 0) {
+                            methods.setValue("offset", offset - 1);
+                            sessionStorage.setItem(
+                              "offset",
+                              (offset - 1).toString()
+                            );
+                            setlimitAndOffset({
+                              ...limitAndOffset,
+                              offset: offset - 1,
+                            });
+                          }
+                        }}
+                      >
+                        <BsFillCaretLeftFill />
+                      </button>
+                      <input
+                        type="number"
+                        id="offsetForUserManagement"
+                        className="w-10 mx-3 text-center appearance-none border-b border-primary focus:outline-none "
+                        {...methods.register("offset")}
+                        onChange={(e) => {
+                          e.target.value = e.target.value.replace(/e/g, "");
+                          if (parseInt(e.target.value) > parseInt(Count) - 1) {
+                            e.target.value = (parseInt(Count) - 1).toString();
+                          }
+                          if (e.target.value.length > 0) {
+                            methods.setValue(
+                              "offset",
+                              parseInt(e.target.value)
+                            );
+                            setlimitAndOffset({
+                              ...limitAndOffset,
+                              offset: parseInt(e.target.value),
+                            });
+                            sessionStorage.setItem("offset", e.target.value);
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.code === "KeyE") {
+                            e.preventDefault();
+                          }
+                        }}
+                      />
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          const offset = limitAndOffset.offset;
+                          if (offset < parseInt(Count) - 1) {
+                            methods.setValue("offset", offset + 1);
+                            sessionStorage.setItem(
+                              "offset",
+                              (offset + 1).toString()
+                            );
+                            setlimitAndOffset({
+                              ...limitAndOffset,
+                              offset: offset + 1,
+                            });
+                          }
+                        }}
+                      >
+                        <BsFillCaretRightFill />
+                      </button>
+                    </div>
+                    <div>
+                      <label htmlFor="">Display </label>
+                      <select
+                        id=""
+                        className="bg-white focus:outline-none border-b "
+                        {...methods.register("limit")}
+                        onChange={(e) => {
+                          e.preventDefault();
+                          sessionStorage.setItem("limit", e.target.value);
+                          methods.setValue("limit", parseInt(e.target.value));
+                          methods.setValue("offset", 0);
+                          sessionStorage.setItem("offset", "0");
                           setlimitAndOffset({
-                            ...limitAndOffset,
-                            offset: offset - 1,
+                            offset: 0,
+                            limit: parseInt(e.target.value),
                           });
-                        }
-                      }}
-                    >
-                      <BsFillCaretLeftFill />
-                    </button>
-                    <input
-                      type="text"
-                      id="offsetForUserManagement"
-                      className="w-10 mx-3 text-center border-b border-primary focus:outline-none "
-                      {...methods.register("offset")}
-                      onChange={(e) => {
-                        e.target.value = e.target.value.replace(/\D/g, "");
-                        if (parseInt(e.target.value) > parseInt(Count) - 1) {
-                          e.target.value = (parseInt(Count) - 1).toString();
-                        }
-                        if (e.target.value.length > 0) {
-                          methods.setValue("offset", parseInt(e.target.value));
-                          setlimitAndOffset({
-                            ...limitAndOffset,
-                            offset: parseInt(e.target.value),
-                          });
-                          sessionStorage.setItem("offset", e.target.value);
-                        }
-                      }}
-                    />
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        const offset = methods.getValues("offset");
-                        if (offset < parseInt(Count) - 1) {
-                          methods.setValue("offset", offset + 1);
-                          sessionStorage.setItem(
-                            "offset",
-                            (offset + 1).toString()
-                          );
-                          setlimitAndOffset({
-                            ...limitAndOffset,
-                            offset: offset + 1,
-                          });
-                        }
-                      }}
-                    >
-                      <BsFillCaretRightFill />
-                    </button>
+                        }}
+                      >
+                        <option value={5}>5 rows</option>
+                        <option value={10}>10 rows</option>
+                        <option value={15}>15 rows</option>
+                      </select>
+                    </div>
                   </div>
-                  <div>
-                    <label htmlFor="">Display </label>
-                    <select
-                      id=""
-                      className="bg-white focus:outline-none border-b "
-                      {...methods.register("limit")}
-                      onChange={(e) => {
-                        e.preventDefault();
-                        sessionStorage.setItem("limit", e.target.value);
-                        methods.setValue("limit", parseInt(e.target.value));
-                        methods.setValue("offset", 0);
-                        sessionStorage.setItem("offset", "0");
-                        setlimitAndOffset({
-                          offset: 0,
-                          limit: parseInt(e.target.value),
-                        });
-                      }}
-                    >
-                      <option value={5}>5 rows</option>
-                      <option value={10}>10 rows</option>
-                      <option value={15}>15 rows</option>
-                    </select>
-                  </div>
-                </div>
+                )}
               </div>
             </form>
           </FormProvider>

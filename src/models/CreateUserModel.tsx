@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 
 const CreateUserModelSchema = Yup.object().shape({
-  role: Yup.object().required("institute is required").nullable(),
+  role: Yup.object().required("role is required").nullable(),
   title: Yup.object().required("Title is required").nullable(),
   firstName: Yup.string().required("first name is required").min(2).max(15),
   lastName: Yup.string().required("last name is required").min(2).max(15),

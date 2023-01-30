@@ -4,17 +4,14 @@ import { Controller, useFormContext, useController } from "react-hook-form";
 import { forwardRef, useEffect } from "react";
 
 const label = (label: any) => ({
-  alignItems: "center",
   display: "flex",
+  flexDirection: "column",
 
   ":before": {
-    borderRadius: 10,
     content: label,
-    display: "inline-block",
-    textTransform: "uppercase",
-    marginRight: 8,
-    marginLeft: 4,
-    height: 24,
+    textTransform: "capitalize",
+    fontSize: "15px",
+    opacity: "0.7",
   },
 });
 
@@ -52,7 +49,7 @@ const SingleSelect = forwardRef(
     const { fieldState } = useController({ name: fieldname });
     let error = fieldState?.error;
 
-    var floatingLabel = "'" + fieldname + " ==>" + "'";
+    var floatingLabel = "'" + fieldname + "'";
 
     const { singleValue, ...restStyle } = selectStyles;
 
@@ -60,6 +57,7 @@ const SingleSelect = forwardRef(
       <>
         <div className="flex mt-5 w-full space-x-2">
           <div className="w-full">
+            {/* <div className="capitalize">{fieldname} : </div> */}
             <Controller
               control={methods.control}
               {...registration}
@@ -74,6 +72,7 @@ const SingleSelect = forwardRef(
                       ...provided,
                       ...label(floatingLabel),
                       color: "#274472",
+                      fontSize: "15px",
                     }),
                     ...restStyle,
                   }}
@@ -110,7 +109,7 @@ export function AsyncSingleSelect({
   const fieldsValue = methods.getValues(fieldname);
   const defaultOptions = fieldsValue !== null ? instituteDefaultOptions : [];
 
-  var floatingLabel = "'" + fieldname + " ==>" + "'";
+  var floatingLabel = "'" + fieldname + "'";
 
   const { singleValue, ...restStyle } = selectStyles;
 
@@ -118,6 +117,7 @@ export function AsyncSingleSelect({
     <>
       <div className="flex mt-5 w-full space-x-2">
         <div className="w-full">
+          {/* <div className="capitalize">{fieldname} : </div> */}
           <Controller
             control={methods.control}
             {...registration}
@@ -135,6 +135,7 @@ export function AsyncSingleSelect({
                     ...provided,
                     ...label(floatingLabel),
                     color: "#274472",
+                    fontSize: "15px",
                   }),
                   ...restStyle,
                 }}
