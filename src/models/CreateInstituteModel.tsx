@@ -5,21 +5,22 @@ const CreateInstituteSchema = Yup.object().shape({
     .required("Name is required")
     .min(3, "minimum 3 charcter is required")
     .max(20, "maximum 20 charcter is allowed"),
-  identifier: Yup.string().required("identifier is required"),
+  identifier: Yup.string()
+    .required("identifier is required")
+    .length(14, "enter valid identifier"),
   addressLine1: Yup.string().required("Address is required"),
   addressLine2: Yup.string(),
   city: Yup.string().required("City is required"),
   postcode: Yup.string()
     .required("post code is required")
-    .length(6)
-    .matches(/[0-9]{6}/, "invalid post code"),
+    .length(6, "enter a valid postcode "),
   country: Yup.string(),
-  territory: Yup.string().required("Territory is required"),
+  territory: Yup.object().required("Territory is required").nullable(),
   localAuthority: Yup.string().required("Local Authority is required"),
   homePage: Yup.string(),
-  level: Yup.string().required("Level is required"),
-  noOfStudents: Yup.number().nullable(),
-  type: Yup.string().default(null).nullable(),
+  level: Yup.object().required("Level is required").nullable(),
+  noOfStudents: Yup.string().nullable(),
+  type: Yup.object().default(null).nullable(),
   isGuest: Yup.boolean().default(false),
 });
 

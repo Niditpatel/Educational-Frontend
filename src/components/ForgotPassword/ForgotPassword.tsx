@@ -62,9 +62,9 @@ export default function ForgotPassword() {
                   </div>
                   {/* errors from api  */}
                   {APIerror.length > 0 && (
-                    <div className="text-xl text-secondary flex space-x-4 bg-warning rounded py-2 px-2 my-2">
+                    <div className="text-xl text-secondary flex space-x-4 bg-warning items-center rounded py-2 px-2 my-2">
                       <AiOutlineWarning className="text-5xl" />{" "}
-                      <span>{APIerror} try again</span>
+                      <span className="capitalize">{APIerror}</span>
                     </div>
                   )}
                   <div className="mt-5">

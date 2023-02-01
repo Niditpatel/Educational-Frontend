@@ -10,12 +10,14 @@ const Headers = (token: any) => {
   };
 };
 
-const Create = async (data: any, endpoints: string) => {
-  const token = sessionStorage.getItem("token");
+const Create = async (endpoints: string, data: any, params: any) => {
+  const token = sessionStorage.getItem("Access");
   try {
     const res = await axios.post<any>(API_URL + endpoints, data, {
       headers: Headers(token),
+      params: params,
     });
+    console.log(token, "token");
     return res.data;
   } catch (error: any) {
     return error.response.data;

@@ -1,7 +1,7 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useOutletContext, useNavigate, Link } from "react-router-dom";
 
 import { Login as LoginService } from "../../AuthService";
@@ -23,7 +23,6 @@ export default function Login() {
     mode: "onChange",
     resolver: yupResolver(LoginDetailSchema),
   });
-  
 
   const onSubmit = async (data: any) => {
     const res = await LoginService(data);
@@ -41,6 +40,14 @@ export default function Login() {
       handleLoading(false);
     }
   };
+
+  useEffect(() => {
+    const logUser = sessionStorage.getItem("User");
+    if (logUser) {
+      navigate("/admin");
+    }
+  });
+
   return (
     <div className="bg-light2 text-primary">
       <div className="container flex flex-col lg:flex-row-reverse justify-between">

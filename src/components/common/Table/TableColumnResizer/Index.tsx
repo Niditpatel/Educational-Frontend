@@ -3,11 +3,9 @@ export function resizableGrid(table: any, tableId: any) {
     cols = row ? row.children : undefined;
   if (!cols) return;
 
-  // table.style.overflowX = "scroll";
-  // table.style.overflowY = "hidden";
+  table.style.overflow = "hidden";
 
   var tableHeight = table.offsetHeight;
-  // console.log(tableHeight, "tablehight");
 
   for (var i = 0; i < cols.length; i++) {
     var div = createDiv(tableHeight);
@@ -77,7 +75,6 @@ export function resizableGrid(table: any, tableId: any) {
     if (getStyleVal(col, "box-sizing") === "border-box") {
       return 0;
     }
-
     var padLeft = getStyleVal(col, "padding-left");
     var padRight = getStyleVal(col, "padding-right");
     return parseInt(padLeft) + parseInt(padRight);

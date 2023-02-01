@@ -22,6 +22,31 @@ export default function TextField({
             className="form-control  block rounded px-2.5 pb-2.5 pt-5 w-full text-sm border
             transition ease-in-out m-0  focus:outline-none focus:ring-0"
             placeholder={label}
+            onKeyDown={(e) => {
+              if (type === "number" && e.code === "KeyE") {
+                e.preventDefault();
+              }
+              if (
+                fieldname === "identifier" &&
+                methods.getValues(fieldname).length >= 14 &&
+                (parseInt(e.key) <= 9 ||
+                  parseInt(e.key) >= 0 ||
+                  e.key === "-" ||
+                  e.key === "+")
+              ) {
+                e.preventDefault();
+              }
+              if (
+                fieldname === "postcode" &&
+                methods.getValues(fieldname).length >= 6 &&
+                (parseInt(e.key) <= 9 ||
+                  parseInt(e.key) >= 0 ||
+                  e.key === "-" ||
+                  e.key === "+")
+              ) {
+                e.preventDefault();
+              }
+            }}
           />
           <label className="text-primary">{label}</label>
         </div>
