@@ -45,9 +45,11 @@ export function resizableGrid(table: any, tableId: any) {
       if (curCol) {
         var diffX = e.pageX - pageX;
 
-        curCol.style.width = curColWidth + diffX + "px";
-        const table: any = document.getElementById(tableId);
-        // table.style.width = tableWidth + diffX + "px";
+        if (diffX < 300) {
+          curCol.style.width = curColWidth + diffX + "px";
+          const table: any = document.getElementById(tableId);
+          table.style.width = tableWidth + diffX + "px";
+        }
       }
     });
 

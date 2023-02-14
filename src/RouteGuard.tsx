@@ -5,6 +5,14 @@ type Props = {
   children: ReactElement;
 };
 
+export function LoggedUserProtactedGuard({ children }: Props): any {
+  if (sessionStorage.getItem("Access")) {
+    return <Navigate to={"/admin"} />;
+  } else {
+    return children;
+  }
+}
+
 export function RouteGuard({ children }: Props): any {
   if (sessionStorage.getItem("Access")) {
     return children;
@@ -15,17 +23,25 @@ export function RouteGuard({ children }: Props): any {
 
 export function RouteAdminGuard({ children }: Props): any {
   const User: any = sessionStorage.getItem("User");
-  if (JSON.parse(User).role === "SuperAdmin") {
-    return children;
-  } else return <Navigate to={"/admin"}></Navigate>;
+  if (User) {
+    if (JSON.parse(User).role === "SuperAdmin") {
+      return children;
+    } else return <Navigate to={"/admin"}></Navigate>;
+  } else {
+    return <Navigate to={"/"}></Navigate>;
+  }
 }
 
 export function RouteSchoolGuard({ children }: Props): any {
   const User: any = sessionStorage.getItem("User");
-  if (
-    JSON.parse(User).role === "SuperAdmin" ||
-    JSON.parse(User).role === "SchoolAdmin"
-  ) {
-    return children;
-  } else return <Navigate to={"/admin"}></Navigate>;
+  if (User) {
+    if (
+      JSON.parse(User).role === "SuperAdmin" ||
+      JSON.parse(User).role === "SchoolAdmin"
+    ) {
+      return children;
+    } else return <Navigate to={"/admin"}></Navigate>;
+  } else {
+    return <Navigate to={"/"}></Navigate>;
+  }
 }

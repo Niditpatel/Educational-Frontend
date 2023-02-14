@@ -7,14 +7,12 @@ export default function CheckboxField(props: any) {
   let error = fieldState?.error;
 
   return (
-    <>
-      <div className="my-3">
-        <div className="flex">
-          <input type="checkbox" {...registration} className="h-4 w-4  mt-1" />
-          <span className=" pl-3">{props.children}</span>
-        </div>
-        <div className="text-sm text-danger">{error?.message}</div>
+    <div className="my-3">
+      <div className="flex">
+        <input type="checkbox" {...registration} className="h-4 w-4  mt-1" />
+        <span className=" pl-3">{props.children}</span>
       </div>
-    </>
+      <div className="text-sm text-danger">{error?.message}</div>
+    </div>
   );
 }

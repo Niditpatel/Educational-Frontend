@@ -5,9 +5,15 @@ import App from "./App";
 import Fallback from "./components/common/Fallback";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { RouteAdminGuard, RouteGuard, RouteSchoolGuard } from "./RouteGuard";
+import {
+  LoggedUserProtactedGuard,
+  RouteAdminGuard,
+  RouteGuard,
+  RouteSchoolGuard,
+} from "./RouteGuard";
 import ErrorPage from "./components/common/ErrorPage/ErrorPage";
 import Profile from "./components/Profile.tsx/Profile";
+import { Test } from "./Test/Test";
 const LandingPage = lazy(() => import("./components/Landingpage/LandingPage"));
 const LandingPageContent = lazy(
   () => import("./components/Landingpage/LandingPageContant")
@@ -24,11 +30,11 @@ const ForgotPassword = lazy(
 const Administration = lazy(() => import("./components/Admin/Adminitration"));
 const Class = lazy(() => import("./components/Admin/Class/Class"));
 const Assets = lazy(() => import("./components/Admin/Assets/Assets"));
-const Institutes = lazy(() => import("./components/Admin/Institutes/Institutes"));
-const Users = lazy(() => import("./components/Admin/Users/users"));
-const ActiveAccount = lazy(
-  () => import("./components/ActiveAccount/Index")
+const Institutes = lazy(
+  () => import("./components/Admin/Institutes/Institutes")
 );
+const Users = lazy(() => import("./components/Admin/Users/users"));
+const ActiveAccount = lazy(() => import("./components/ActiveAccount/Index"));
 const VerifyAccount = lazy(() => import("./components/VerifyAccount"));
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -45,6 +51,16 @@ root.render(
             </Suspense>
           }
         >
+          <Route
+            path="/test"
+            element={
+              <Suspense fallback={<Fallback />}>
+                <Test />
+              </Suspense>
+            }
+          >
+            {" "}
+          </Route>
           <Route
             path="/"
             element={
@@ -64,9 +80,11 @@ root.render(
           <Route
             path="/signup"
             element={
-              <Suspense fallback={<Fallback />}>
-                <Signup />
-              </Suspense>
+              <LoggedUserProtactedGuard>
+                <Suspense fallback={<Fallback />}>
+                  <Signup />
+                </Suspense>
+              </LoggedUserProtactedGuard>
             }
           ></Route>
           <Route

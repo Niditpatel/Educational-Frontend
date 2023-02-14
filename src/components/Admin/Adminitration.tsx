@@ -19,64 +19,54 @@ export default function Administration() {
   return (
     <>
       {LogUser && (
-        <div className="px-2">
-          <div className="container text-primary">
-            <div className="text-primary capitalize">administration</div>
-            <div className="grid grid-cols-2 md:grid-cols-4">
-              {(LogUser.role === "SuperAdmin" ||
-                LogUser.role === "SchoolAdmin") && (
-                <div className="">
-                  <div className="text-6xl w-fit h-fit mx-auto text-light2   lg:text-7xl xl:text-9xl  ">
-                    <Link to={"/users"}>
-                      <FaUserClock />
-                    </Link>
-                  </div>
-                  <div className="w-fit h-fit mx-auto capitalize">
-                    <Link to={"/users"}>users</Link>
-                  </div>
+        <div className="container px-2 text-primary">
+          <div className="text-primary capitalize">administration</div>
+          <div className="mt-3 grid grid-cols-3 md:grid-cols-4 gap-x-6 gap-y-3 md:gap-28">
+            {(LogUser.role === "SuperAdmin" ||
+              LogUser.role === "SchoolAdmin") && (
+              <div className="w-fit">
+                <div className="text-6xl w-fit h-fit mx-auto text-light2   lg:text-7xl xl:text-9xl hover:text-secondary">
+                  <Link to={"/users"}>
+                    <FaUserClock />
+                  </Link>
                 </div>
-              )}
-              {LogUser.role === "SuperAdmin" && (
-                <div className="">
-                  <div className="text-6xl w-fit h-fit mx-auto text-light2   lg:text-7xl xl:text-9xl  ">
-                    <Link to={"/institutes"}>
-                      <FaSchool />
-                    </Link>
-                  </div>
-                  <div className="w-fit h-fit mx-auto capitalize">
-                    <Link to={"/institutes"}>institutes</Link>
-                  </div>
+                <div className="w-fit h-fit mx-auto capitalize">users</div>
+              </div>
+            )}
+            {LogUser.role === "SuperAdmin" && (
+              <div className="w-fit">
+                <div className="text-6xl w-fit h-fit mx-auto text-light2   lg:text-7xl xl:text-9xl hover:text-secondary ">
+                  <Link to={"/institutes"}>
+                    <FaSchool />
+                  </Link>
                 </div>
-              )}
-              {(LogUser.role === "SuperAdmin" ||
-                LogUser.role === "SchoolAdmin" ||
-                LogUser.role === "Teacher") && (
-                <div className="">
-                  <div className="text-6xl w-fit h-fit mx-auto text-light2   lg:text-7xl xl:text-9xl  ">
-                    <Link to={"/classes"}>
-                      <BsFillDisplayFill />
-                    </Link>
-                  </div>
-                  <div className="w-fit h-fit mx-auto capitalize">
-                    <Link to={"/classes"}>classes</Link>
-                  </div>
+                <div className="w-fit h-fit mx-auto capitalize">institutes</div>
+              </div>
+            )}
+            {(LogUser.role === "SuperAdmin" ||
+              LogUser.role === "SchoolAdmin" ||
+              LogUser.role === "Teacher") && (
+              <div className="w-fit">
+                <div className="text-6xl w-fit h-fit mx-auto text-light2   lg:text-7xl xl:text-9xl  hover:text-secondary">
+                  <Link to={"/classes"}>
+                    <BsFillDisplayFill />
+                  </Link>
                 </div>
-              )}
-              {(LogUser.role === "SuperAdmin" ||
-                LogUser.role === "SchoolAdmin" ||
-                LogUser.role === "Teacher") && (
-                <div className="">
-                  <div className="text-6xl w-fit h-fit mx-auto text-light2 lg:text-7xl xl:text-9xl  ">
-                    <Link to={"/assets"}>
-                      <ImBooks />
-                    </Link>
-                  </div>
-                  <div className="w-fit h-fit mx-auto capitalize">
-                    <Link to={"/assets"}>assets</Link>
-                  </div>
+                <div className="w-fit h-fit mx-auto capitalize">classes</div>
+              </div>
+            )}
+            {(LogUser.role === "SuperAdmin" ||
+              LogUser.role === "SchoolAdmin" ||
+              LogUser.role === "Teacher") && (
+              <div className="w-fit">
+                <div className="text-6xl w-fit h-fit mx-auto text-light2 lg:text-7xl xl:text-9xl  hover:text-secondary">
+                  <Link to={"/assets"}>
+                    <ImBooks />
+                  </Link>
                 </div>
-              )}
-            </div>
+                <div className="w-fit h-fit mx-auto capitalize">assets</div>
+              </div>
+            )}
           </div>
         </div>
       )}

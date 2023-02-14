@@ -121,13 +121,15 @@ export default function Signup() {
                   type="email"
                   required={true}
                 />
-                <SingleSelect
-                  fieldname="title"
-                  placeholder="Select Title"
-                  options={Titles}
-                  isSearchable={false}
-                  required={true}
-                />
+                <div className="w-full mt-5">
+                  <SingleSelect
+                    fieldname="title"
+                    placeholder="Select Title"
+                    options={Titles}
+                    isSearchable={false}
+                    required={true}
+                  />
+                </div>
                 <TextField
                   label="First Name"
                   fieldname="firstName"

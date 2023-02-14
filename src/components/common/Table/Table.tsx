@@ -1,27 +1,37 @@
 import { MdModeEditOutline, MdDelete } from "react-icons/md";
-import {
-  TiArrowSortedDown,
-  TiArrowSortedUp,
-  TiArrowUnsorted,
-} from "react-icons/ti";
+import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 
 import { useEffect, useState } from "react";
 
 import { resizableGrid } from "./TableColumnResizer/Index";
 
+import { Tooltip } from "../Tootip/Tooltip";
+
 export default function Table(props: any) {
-  const { data, isFor, handleEdit, handleDelete, children } = props;
+  const { data, isFor, handleEdit, handleDelete, handleSort, children } = props;
 
   const [columnVisibility, setcolumnVisibility] = useState<any>({});
 
-  const [Sort, setSort] = useState({ field: "", order: 2, visible: false });
+  const [Sort, setSort] = useState({ field: "", order: 0, visible: false });
 
   useEffect(() => {
     const table: any = document.getElementsByClassName("table");
     for (var i = 0; i < table.length; i++) {
       resizableGrid(table[i], "Table");
     }
-  });
+    const order = sessionStorage.getItem(isFor + "order");
+    const sort_by = sessionStorage.getItem(isFor + "sort_by");
+
+    if (sort_by !== null && sort_by !== undefined) {
+      if (order !== undefined && order !== null) {
+        setSort({
+          order: parseInt(order) === -1 ? 0 : 1,
+          field: sort_by,
+          visible: true,
+        });
+      }
+    }
+  }, []);
 
   // for column visibility
   useEffect(() => {
@@ -31,6 +41,11 @@ export default function Table(props: any) {
     });
     setcolumnVisibility(arr);
   }, [data]);
+
+  const handleScrolling = (e: any) => {
+    const doc: any = document.getElementById("TableParent");
+    doc.scrollLeft += e.deltaY;
+  };
 
   return (
     <>
@@ -80,17 +95,34 @@ export default function Table(props: any) {
       </div>
 
       {/* table data  */}
-      <div className="w-full overflow-x-auto overflow-y-hidden h-fit">
+      <div
+        id="TableParent"
+        className="w-full overflow-x-auto overflow-y-hidden h-fit  scrollbar-none"
+        onWheel={(e) => {
+          handleScrolling(e);
+        }}
+        onMouseOver={(e) => {
+          const div: any = document.getElementById("LandingPage");
+          div.style.overflow = "hidden";
+        }}
+        onMouseLeave={(e) => {
+          const div: any = document.getElementById("LandingPage");
+          div.style.overflow = "auto";
+        }}
+      >
         <table
-          className="table w-full text-center border-collapse mt-5"
+          className="table w-full text-center border-collapse mt-5 min-w-[1422px]"
           id="Table"
         >
-          <thead>
+          <thead
+            id={isFor + "TableHeader"}
+            data-tooltip-content="do double click on field header to sort data according to the field and do click to change sort ascending to descending"
+          >
             <tr className="bg-secondary/[0.6]">
               {Object.keys(data[0]).map((item: any, index: any) => (
                 <th
                   key={index}
-                  className={`p-1  border  ${
+                  className={`p-3 text-lg  border  ${
                     columnVisibility[item] === true ? "show" : "hidden"
                   }`}
                 >
@@ -103,13 +135,32 @@ export default function Table(props: any) {
                         field: item,
                         visible: true,
                       });
+                      handleSort({
+                        order: 1,
+                        sort_by: item,
+                      });
+                      sessionStorage.setItem(isFor + "order", "1");
+                      sessionStorage.setItem(isFor + "sort_by", item);
                     }}
                     onClick={(e) => {
                       e.preventDefault();
-                      setSort({
-                        ...Sort,
-                        order: Sort.order === 1 ? 0 : 1,
-                      });
+                      if (Sort.field === item) {
+                        setSort({
+                          ...Sort,
+                          order: Sort.order === 1 ? 0 : 1,
+                        });
+                        if (Sort.visible === true) {
+                          handleSort({
+                            order: Sort.order === 1 ? -1 : 1,
+                            sort_by: item,
+                          });
+                          sessionStorage.setItem(
+                            isFor + "order",
+                            Sort.order === 0 ? "1" : "-1"
+                          );
+                          sessionStorage.setItem(isFor + "sort_by", item);
+                        }
+                      }
                     }}
                   >
                     <span className="capitalize whitespace-nowrap">
@@ -127,7 +178,7 @@ export default function Table(props: any) {
                   </button>
                 </th>
               ))}
-              <th className="capitalize border">Action</th>
+              <th className="capitalize border p-3 text-lg ">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -136,19 +187,24 @@ export default function Table(props: any) {
                 {Object.keys(item).map((key: any) => (
                   <td
                     key={key}
-                    className={`border px-1 truncate ${
+                    className={`border p-2 max-w-[50px]  truncate ${
                       columnVisibility[key] === true ? "show" : "hidden"
                     }`}
+                    style={{ fontSize: "17px", lineHeight: "28px" }}
                   >
-                    {item[key]}
+                    {typeof item[key] === "boolean"
+                      ? item[key] === true
+                        ? "Yes"
+                        : "No"
+                      : item[key]}
                   </td>
                 ))}
-                <td className="flex p-1 space-x-2">
+                <td className="flex p-2  items-center justify-center space-x-2">
                   <button
                     onClick={(e) => {
                       e.preventDefault();
                       handleEdit(item._id);
-                      sessionStorage.setItem("action", "edit");
+                      sessionStorage.setItem(isFor + "action", "edit");
                       sessionStorage.setItem("edit" + isFor + "Id", item._id);
                     }}
                   >
@@ -157,7 +213,7 @@ export default function Table(props: any) {
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      handleDelete(item._id);
+                      handleDelete(item);
                     }}
                   >
                     <MdDelete />
@@ -167,6 +223,7 @@ export default function Table(props: any) {
             ))}
           </tbody>
         </table>
+        {/* <Tooltip id={isFor + "TableHeader"} /> */}
       </div>
     </>
   );

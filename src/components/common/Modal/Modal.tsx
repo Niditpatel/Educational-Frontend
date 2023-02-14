@@ -1,26 +1,26 @@
 import { AiOutlineWarning } from "react-icons/ai";
 
 export default function Modal(props: any) {
-  const { handleConform, modalText, isFor } = props;
+  const { handleConform, modalText, isFor, id } = props;
 
   return (
     <>
       <button
-        id="confirmModalToggleButton"
+        id={id}
         className="hidden"
         data-bs-toggle="modal"
-        data-bs-target="#confirmModal"
+        data-bs-target={"#confirm" + id}
       ></button>
       <div
         className="modal fade fixed top-20 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
-        id="confirmModal"
+        id={"confirm" + id}
         data-bs-backdrop="static"
         data-bs-keyboard="false"
         tabIndex={-1}
         aria-labelledby="staticBackdropLabel"
         aria-hidden="true"
       >
-        <div className="modal-dialog relative w-auto pointer-events-none">
+        <div className="modal-dialog relative w-auto pointer-events-none text-primary">
           <div className="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current">
             <div className="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b  rounded-t-md">
               <h5

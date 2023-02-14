@@ -27,10 +27,10 @@ export default function UpdateUser(props: any) {
   let userId = props.userId;
 
   const [Title, setTitle] = useState([]);
-  const [selectRoles, setselectRoles] = useState<any>([]);
   const [CahcheInstitute, setCahcheInstitute] = useState<any>([]);
 
   const [userData, setuserData] = useState({});
+  const [userApproved, setuserApproved] = useState(false);
 
   const [APIerror, setAPIerror] = useState("");
   const [APIsuccess, setAPIsuccess] = useState("");
@@ -127,22 +127,14 @@ export default function UpdateUser(props: any) {
       handleLoading(false);
     });
 
-    GetDataService("roles", token, {}).then((res) => {
-      if (res.success === 1) {
-        const options = res.data.map((val: any) => {
-          return { label: val, value: val };
-        });
-        setselectRoles([...options]);
-        handleLoading(false);
-      }
-    });
-
     const editUserId = sessionStorage.getItem("editUserId");
 
     GetDataService("user/" + editUserId, token, {}).then((res) => {
       if (res.success === 1) {
         const user = res.user;
         console.log(user, "user");
+
+        setuserApproved(user.Approved);
 
         methods.setValue("email", user.email);
         methods.setValue("firstName", user.firstName);
@@ -166,29 +158,49 @@ export default function UpdateUser(props: any) {
     });
   }, [userId]);
 
+  const HandleUserApprove = () => {
+    setAPIsuccess("");
+    setAPIerror("");
+    handleLoading(true);
+    const token = sessionStorage.getItem("Access");
+    const editUserId = sessionStorage.getItem("editUserId");
+    UpdateDataService("user/approved/" + editUserId, {}, token, {}).then(
+      (res: any) => {
+        if (res.success === 1) {
+          setAPIsuccess(res.message);
+          props.viewUpdatedData(true);
+          setuserApproved(true);
+        } else {
+          setAPIerror(res.message);
+        }
+      }
+    );
+    return handleLoading(false);
+  };
+
   return (
     <>
       <div className="flex justify-center">
         {APIerror.length > 0 && (
-          <div className="bg-warning rounded p-2">{APIerror}</div>
+          <div className="bg-warning rounded p-2 capitalize">{APIerror}</div>
         )}
         {APIsuccess.length > 0 && (
-          <div className="bg-success p-2 rounded">{APIsuccess}</div>
+          <div className="bg-success p-2 rounded capitalize">{APIsuccess}</div>
         )}
       </div>
       <FormProvider {...methods}>
         <form action="" onSubmit={methods.handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
-            <div>
+            <div className="w-full mt-5">
               <SingleSelect
                 fieldname="role"
                 placeholder="Select Role"
                 required={true}
-                options={selectRoles}
+                options={props.roles}
                 isSearchable={false}
               />
             </div>
-            <div>
+            <div className="w-full mt-5">
               <SingleSelect
                 fieldname="title"
                 placeholder="Select Title"
@@ -251,6 +263,17 @@ export default function UpdateUser(props: any) {
             >
               Reset Password
             </button>
+            {userApproved === false && (
+              <button
+                className="border border-primary w-32 text-center bg-primary text-white  py-1  capitalize hover:bg-white hover:text-primary"
+                onClick={(e) => {
+                  e.preventDefault();
+                  HandleUserApprove();
+                }}
+              >
+                Approve User
+              </button>
+            )}
           </div>
         </form>
       </FormProvider>

@@ -1,7 +1,7 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
 
 import TextField from "../../common/Fields/TextField";
@@ -10,15 +10,13 @@ import CheckboxField from "../../common/Fields/CheckboxField";
 
 import { CreateInstituteSchema } from "../../../models/CreateInstituteModel";
 
-import {
-  Get as GetDataService,
-  Create as CreateInstituteService,
-} from "../../../CurdService";
+import { Create as CreateInstituteService } from "../../../CurdService";
 
-export default function CreateInstitute() {
-  const [levels, setlevels] = useState<any>([]);
-  const [types, settypes] = useState<any>([]);
-  const [territories, setterritories] = useState<any>([]);
+export default function CreateInstitute(props: any) {
+  const { levels, types, territories } = props;
+
+  const [APIerror, setAPIerror] = useState("");
+  const [APIsuccess, setAPIsuccess] = useState("");
 
   const methods = useForm({
     mode: "onChange",
@@ -27,6 +25,9 @@ export default function CreateInstitute() {
   const { handleLoading } = useOutletContext<any>();
 
   const onSubmit = (data: any) => {
+    setAPIsuccess("");
+    setAPIerror("");
+    handleLoading(true);
     const { type, level, territory, ...restData } = data;
     CreateInstituteService(
       "institute/",
@@ -38,128 +39,105 @@ export default function CreateInstitute() {
       },
       {}
     ).then((res: any) => {
-      console.log(res, "res");
+      if (res.success === 1) {
+        setAPIsuccess(res.message);
+        methods.reset();
+        handleLoading(false);
+        props.viewCreatedData(true);
+      } else if (res.success === 0) {
+        setAPIerror(res.message);
+        handleLoading(false);
+      }
     });
   };
 
-  useEffect((): any => {
-    const token = sessionStorage.getItem("Access");
-    handleLoading(true);
-    // types
-    GetDataService("institute/type", token, {}).then((data: any) => {
-      const types = data.map((val: string) => {
-        return { value: val, label: val };
-      });
-      settypes(types);
-    });
-    // levels
-    GetDataService("institute/level", token, {}).then((data: any) => {
-      const levels = data.map((val: string) => {
-        return { value: val, label: val };
-      });
-      setlevels(levels);
-    });
-    // territories
-    GetDataService("institute/territory", token, {}).then((data: any) => {
-      const territories = data.map((val: string) => {
-        return { value: val, label: val };
-      });
-      setterritories(territories);
-    });
-    return handleLoading(false);
-  }, []);
-
   return (
     <>
-      <div>
-        <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(onSubmit)}>
-            <div className="grid grid-cols-2">
-              <div className="">
-                <TextField fieldname="name" label="Name" />
-              </div>
-              <div>
-                <TextField
-                  fieldname="identifier"
-                  label="Indetifier"
-                  type="number"
-                />
-              </div>
-              <div>
-                <TextField fieldname="addressLine1" label="Address line 1" />
-              </div>
-              <div>
-                <TextField fieldname="addressLine2" label="Address line 2" />
-              </div>
-              <div>
-                <TextField fieldname="city" label="Town / City" />
-              </div>
-              <div>
-                <TextField
-                  fieldname="postcode"
-                  label="Postcode"
-                  type="number"
-                />
-              </div>
-              <div>
-                <TextField fieldname="country" label="Country" />
-              </div>
-              <div>
-                <SingleSelect
-                  fieldname="territory"
-                  placeholder="Select Territory"
-                  options={territories}
-                  isSearchable={false}
-                  required={true}
-                />
-              </div>
-              <div>
-                <TextField fieldname="localAuthority" label="Local Authority" />
-              </div>
-              <div>
-                <SingleSelect
-                  fieldname="level"
-                  placeholder="Level"
-                  options={levels}
-                  isSearchable={false}
-                  required={true}
-                />
-              </div>
-              <div>
-                <SingleSelect
-                  fieldname="type"
-                  placeholder="Type"
-                  options={types}
-                  isSearchable={false}
-                />
-              </div>
-              <div>
-                <TextField fieldname="homePage" label="Home Page" />
-              </div>
-              <div>
-                <TextField
-                  fieldname="noOfStudents"
-                  label="No Of Students"
-                  type="number"
-                />
-              </div>
+      <div className="flex justify-center">
+        {APIerror.length > 0 && (
+          <div className="bg-warning rounded p-2">{APIerror}</div>
+        )}
+        {APIsuccess.length > 0 && (
+          <div className="bg-success p-2 rounded">{APIsuccess}</div>
+        )}
+      </div>
+      <FormProvider {...methods}>
+        <form onSubmit={methods.handleSubmit(onSubmit)}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <TextField fieldname="name" label="Name" required={true} />
+            <TextField
+              fieldname="identifier"
+              label="Indetifier"
+              type="number"
+              required={true}
+            />
+            <TextField
+              fieldname="addressLine1"
+              label="Address line 1"
+              required={true}
+            />
+            <TextField fieldname="addressLine2" label="Address line 2" />
+            <TextField fieldname="city" label="Town / City" required={true} />
+            <TextField
+              fieldname="postcode"
+              label="Postcode"
+              type="number"
+              required={true}
+            />
+            <TextField fieldname="country" label="Country" />
+            <div className="w-full mt-5">
+              <SingleSelect
+                fieldname="territory"
+                placeholder="Select Territory"
+                options={territories}
+                isSearchable={false}
+                required={true}
+              />
             </div>
             <div>
-              <CheckboxField fieldname="isGuest">
-                <label>Guset Institution</label>
-              </CheckboxField>
+              <TextField
+                fieldname="localAuthority"
+                label="Local Authority"
+                required={true}
+              />
             </div>
-            <div className="flex justify-center">
-              <button
-                type="submit"
-                className="border border-primary px-5 text-center bg-primary text-white  py-1  capitalize hover:bg-white hover:text-primary "
-              >
-                Create Institution
-              </button>
+            <div className="w-full mt-5">
+              <SingleSelect
+                fieldname="level"
+                placeholder="Level"
+                options={levels}
+                isSearchable={false}
+                required={true}
+              />
             </div>
-          </form>
-        </FormProvider>
-      </div>
+            <div className="w-full mt-5">
+              <SingleSelect
+                fieldname="type"
+                placeholder="Type"
+                options={types}
+                isSearchable={false}
+              />
+            </div>
+            <TextField fieldname="homePage" label="Home Page" />
+            <TextField
+              fieldname="noOfStudents"
+              label="No Of Students"
+              type="number"
+            />
+          </div>
+          <CheckboxField fieldname="isGuest">
+            <label>Guset Institution</label>
+          </CheckboxField>
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              className="border border-primary px-5 text-center bg-primary text-white  py-1  capitalize hover:bg-white hover:text-primary "
+            >
+              Create Institution
+            </button>
+          </div>
+        </form>
+      </FormProvider>
     </>
   );
 }

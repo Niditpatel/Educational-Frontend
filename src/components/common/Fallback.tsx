@@ -4,7 +4,7 @@ export default function Fallback() {
       <div
         className={`bg-primary/[0.4] w-screen h-screen absolute top-0 left-0 right-0 bottom-0 `}
       >
-        <div className="w-fit h-fit mx-auto mt-[25%]  flex items-center ">
+        <div className="w-fit h-full mx-auto  flex items-center ">
           <svg
             className="animate-spin -ml-1 mr-3 h-10 w-10 text-primary"
             xmlns="http://www.w3.org/2000/svg"

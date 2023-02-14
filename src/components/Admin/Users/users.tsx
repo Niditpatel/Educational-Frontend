@@ -12,16 +12,17 @@ import {
   Delete as DeleteDataService,
 } from "../../../CurdService";
 
-import { MdClose } from "react-icons/md";
-import { AiOutlineWarning } from "react-icons/ai";
-import { BsFillCaretLeftFill, BsFillCaretRightFill } from "react-icons/bs";
-
 import { SearchUsersModel } from "../../../models/searchUsersModel";
 
 import CreateUser from "./CreateUser";
 import UpdateUser from "./UpdateUser";
 import Table from "../../common/Table/Table";
 import Modal from "../../common/Modal/Modal";
+import ShowDataQuery from "../../common/Table/ShowdataQuery/ShowDataQuery";
+import DisplayRows from "../../common/Table/DisplayRows/DisplayRows";
+import ReturnToTop from "../../common/ReturnToTop/ReturnToTop";
+import Pagination from "../../common/Pagination/Pagination";
+import { Tooltip } from "../../common/Tootip/Tooltip";
 
 export default function Users() {
   const [selectRoles, setselectRoles] = useState<any>([]);
@@ -32,7 +33,7 @@ export default function Users() {
 
   const [Users, setUsers] = useState<[]>([]);
 
-  const [DeleteUser, setDeleteUser] = useState("");
+  const [DeleteUser, setDeleteUser] = useState<any>({});
   const [DeleteUserRespone, setDeleteUserRespone] = useState("");
 
   const [ActionUserid, setActionUserid] = useState("");
@@ -40,8 +41,10 @@ export default function Users() {
 
   const [limitAndOffset, setlimitAndOffset] = useState({
     limit: 5,
-    offset: 0,
+    offset: 1,
   });
+
+  const [sortData, setsortData] = useState({ order: 1, sort_by: "" });
 
   const [LoggedUser, setLoggedUser] = useState<any>();
 
@@ -49,55 +52,67 @@ export default function Users() {
 
   const [viewNewData, setviewNewData] = useState(false);
 
+  const [Flag, setFlag] = useState(false);
+
   const methods = useForm({
     mode: "onChange",
     resolver: yupResolver(SearchUsersModel),
     defaultValues: {
       query: null,
       limit: 5,
-      offset: 0,
+      offset: 1,
       search_schools: [],
       role: [],
     },
   });
 
   const GetUsers = useMemo(async () => {
-    const token = sessionStorage.getItem("Access");
-    handleLoading(true);
-    const res: { success: Number; data: []; message: String; count: any } =
-      await GetDataService("user/", token, {
-        query: methods.getValues("query"),
-        limit: methods.getValues("limit"),
-        offset: methods.getValues("offset"),
-        search_schools:
-          methods.getValues("search_schools") !== undefined
-            ? methods
-                .getValues("search_schools")
-                .map((item: any) => item.value)
-                .join("&&")
-            : "",
-        role:
-          methods.getValues("role") !== undefined
-            ? methods
-                .getValues("role")
-                .map((item: any) => item.value)
-                .join("&&")
-            : "",
-      });
-    if (res.success === 1) {
-      setUsers(res.data);
-      setTotalData(res.count);
-      setCount(Math.ceil(parseInt(res.count) / methods.getValues("limit")));
-      handleLoading(false);
+    if (Flag) {
+      const token = sessionStorage.getItem("Access");
+      handleLoading(true);
+      const res: { success: Number; data: []; message: String; count: any } =
+        await GetDataService("user/", token, {
+          query: methods.getValues("query"),
+          limit: methods.getValues("limit"),
+          offset: methods.getValues("offset"),
+          search_schools:
+            methods.getValues("search_schools") !== undefined
+              ? methods
+                  .getValues("search_schools")
+                  .map((item: any) => item.value)
+                  .join("&&")
+              : "",
+          role:
+            methods.getValues("role") !== undefined
+              ? methods
+                  .getValues("role")
+                  .map((item: any) => item.value)
+                  .join("&&")
+              : "",
+          order: sortData.order,
+          sort_by: sortData.sort_by,
+        });
+      if (res.success === 1) {
+        setUsers(res.data);
+        setTotalData(res.count);
+        setCount(Math.ceil(parseInt(res.count) / methods.getValues("limit")));
+        handleLoading(false);
+      }
+      if (res.success === 0) {
+        setUsers([]);
+        setTotalData(0);
+        setCount(0);
+        handleLoading(false);
+      }
     }
     return true;
-  }, [limitAndOffset, DeleteUserRespone, viewNewData]);
+  }, [limitAndOffset, DeleteUserRespone, viewNewData, sortData]);
 
   const onSubmit = async (data: any) => {
     methods.setValue("limit", 5);
-    methods.setValue("offset", 0);
+    methods.setValue("offset", 1);
     sessionStorage.setItem("limit", "5");
-    sessionStorage.setItem("offset", "0");
+    sessionStorage.setItem("offset", "1");
     const token = sessionStorage.getItem("Access");
 
     if (data.role !== undefined) {
@@ -124,6 +139,8 @@ export default function Users() {
           : "",
       offset: data.offset,
       limit: data.limit,
+      order: sortData.order,
+      sort_by: sortData.sort_by,
     }).then((res: any) => {
       if (res.success === 1) {
         handleLoading(false);
@@ -145,7 +162,7 @@ export default function Users() {
     const user: any = sessionStorage.getItem("User");
     const logUser = user !== null ? JSON.parse(user) : user;
     setLoggedUser(logUser);
-    const action = sessionStorage.getItem("action");
+    const action = sessionStorage.getItem("Useraction");
     setaction(action !== undefined && action !== null ? action : "search");
 
     const token = sessionStorage.getItem("Access");
@@ -155,6 +172,8 @@ export default function Users() {
     const search_schools = sessionStorage.getItem("search_schools");
     const offset = sessionStorage.getItem("offset");
     const limit = sessionStorage.getItem("limit");
+    const order = sessionStorage.getItem("Userorder");
+    const sort_by = sessionStorage.getItem("Usersort_by");
 
     if (query !== null && query !== undefined) {
       methods.setValue("query", JSON.parse(query));
@@ -166,6 +185,11 @@ export default function Users() {
       methods.setValue("offset", JSON.parse(offset));
     }
 
+    if (sort_by !== undefined && sort_by !== null) {
+      if (order !== null && order !== undefined) {
+        setsortData({ order: parseInt(order), sort_by: sort_by });
+      }
+    }
     // getting roles
     GetDataService("roles", token, {}).then((res) => {
       handleLoading(false);
@@ -191,8 +215,10 @@ export default function Users() {
               .map((item: any) => item.value)
               .join("&&")
           : "",
-      offset: offset !== undefined && offset !== null ? offset : 0,
+      offset: offset !== undefined && offset !== null ? offset : 1,
       limit: limit !== undefined && limit !== null ? limit : 5,
+      order: order !== undefined && order !== null ? parseInt(order) : 1,
+      sort_by: sort_by !== undefined && sort_by !== null ? sort_by : "_id",
     }).then((res: any) => {
       if (res.success === 1) {
         handleLoading(false);
@@ -210,7 +236,7 @@ export default function Users() {
       }
     });
 
-    return handleLoading(false);
+    return handleLoading(false), setFlag(true);
   }, []);
 
   // for search institutes
@@ -229,7 +255,7 @@ export default function Users() {
   function handleDelete() {
     handleLoading(true);
     const token = sessionStorage.getItem("Access");
-    DeleteDataService("user/", token, DeleteUser).then((res) => {
+    DeleteDataService("user/", token, DeleteUser._id).then((res) => {
       handleLoading(false);
       setDeleteUserRespone(res.message);
     });
@@ -248,19 +274,89 @@ export default function Users() {
   };
 
   // conformation for delete
-  const handleUserDelete = (data: any) => {
+  const handleConfirmationForUserDelete = (data: any) => {
     setDeleteUser(data);
-    document.getElementById("confirmModalToggleButton")?.click();
+    document.getElementById("DeleteUserModal")?.click();
+  };
+
+  // handle data sorting
+  const handleSorting = (data: any) => {
+    setsortData({
+      sort_by: data.sort_by,
+      order: data.order,
+    });
+  };
+
+  // handle Display Rows
+  const handleDisplayRows = (data: any) => {
+    sessionStorage.setItem("limit", data);
+    methods.setValue("limit", parseInt(data));
+    methods.setValue("offset", 1);
+    sessionStorage.setItem("offset", "1");
+    setlimitAndOffset({
+      offset: 1,
+      limit: parseInt(data),
+    });
+  };
+
+  // handle return to top
+  const handleReturnToTop = () => {
+    setaction("search");
+    sessionStorage.setItem("Useraction", "search");
+  };
+
+  // on page up
+  const handlePageUp = (data: any) => {
+    const offset = limitAndOffset.offset;
+    if (offset < parseInt(Count)) {
+      methods.setValue("offset", offset + 1);
+      sessionStorage.setItem("offset", (offset + 1).toString());
+      setlimitAndOffset({
+        ...limitAndOffset,
+        offset: offset + 1,
+      });
+    }
+  };
+
+  // on page down
+  const handlePageDown = (data: any) => {
+    const offset = methods.getValues("offset");
+    if (offset > 1) {
+      methods.setValue("offset", offset - 1);
+      sessionStorage.setItem("offset", (offset - 1).toString());
+      setlimitAndOffset({
+        ...limitAndOffset,
+        offset: offset - 1,
+      });
+    }
+  };
+
+  // on page jump
+  const handlePageJump = (data: any) => {
+    const page = parseInt(data);
+    if (data.length > 0 && page >= 1 && page !== limitAndOffset.offset) {
+      methods.setValue("offset", page);
+      setlimitAndOffset({
+        ...limitAndOffset,
+        offset: page,
+      });
+      sessionStorage.setItem("offset", data);
+    }
   };
 
   return (
-    <div className=" container px-2 text-primary">
+    <div className=" container px-2 text-primary ">
       <div className="capitalize text-lg">Users</div>
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <div className=" mt-5 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
             <div className="w-full pr-4">
-              <label htmlFor="" className="capitalize">
+              <label
+                id="UserSearchQueryLabel"
+                htmlFor=""
+                className="capitalize"
+                data-tooltip-content="Search First Name, Last Name , Email Or Institute Name Here..."
+              >
                 search
               </label>
               <br />
@@ -322,6 +418,8 @@ export default function Users() {
                   sessionStorage.removeItem("query");
                   sessionStorage.removeItem("search_schools");
                   sessionStorage.removeItem("role");
+                  sessionStorage.removeItem("Userorder");
+                  sessionStorage.removeItem("Usersort_by");
                 }}
               >
                 reset
@@ -333,7 +431,7 @@ export default function Users() {
                 onClick={(e) => {
                   e.preventDefault();
                   setaction("new");
-                  sessionStorage.setItem("action", "new");
+                  sessionStorage.setItem("Useraction", "new");
                 }}
               >
                 &#43; create user
@@ -349,21 +447,10 @@ export default function Users() {
                       data={Users}
                       isFor={"User"}
                       handleEdit={handleUserEdit}
-                      handleDelete={handleUserDelete}
+                      handleDelete={handleConfirmationForUserDelete}
+                      handleSort={handleSorting}
                     >
-                      <div>
-                        showing{" "}
-                        {methods.getValues("offset") *
-                          methods.getValues("limit")}{" "}
-                        -{" "}
-                        {TotalData <
-                        (methods.getValues("offset") + 1) *
-                          methods.getValues("limit")
-                          ? TotalData
-                          : (methods.getValues("offset") + 1) *
-                            methods.getValues("limit")}{" "}
-                        of {TotalData} results
-                      </div>
+                      <ShowDataQuery TotalData={TotalData} />
                     </Table>
                   )}
                 </>
@@ -378,94 +465,17 @@ export default function Users() {
             </div>
             {Users.length !== 0 && (
               <div className="flex my-5 justify-between">
-                <div>
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      const offset = methods.getValues("offset");
-                      if (offset > 0) {
-                        methods.setValue("offset", offset - 1);
-                        sessionStorage.setItem(
-                          "offset",
-                          (offset - 1).toString()
-                        );
-                        setlimitAndOffset({
-                          ...limitAndOffset,
-                          offset: offset - 1,
-                        });
-                      }
-                    }}
-                  >
-                    <BsFillCaretLeftFill />
-                  </button>
-                  <input
-                    type="number"
-                    id="offsetForUserManagement"
-                    className="w-10 mx-3 text-center appearance-none border-b border-primary focus:outline-none "
-                    {...methods.register("offset")}
-                    onChange={(e) => {
-                      e.target.value = e.target.value.replace(/e/g, "");
-                      if (parseInt(e.target.value) > parseInt(Count) - 1) {
-                        e.target.value = (parseInt(Count) - 1).toString();
-                      }
-                      if (e.target.value.length > 0) {
-                        methods.setValue("offset", parseInt(e.target.value));
-                        setlimitAndOffset({
-                          ...limitAndOffset,
-                          offset: parseInt(e.target.value),
-                        });
-                        sessionStorage.setItem("offset", e.target.value);
-                      }
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.code === "KeyE") {
-                        e.preventDefault();
-                      }
-                    }}
-                  />
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      const offset = limitAndOffset.offset;
-                      if (offset < parseInt(Count) - 1) {
-                        methods.setValue("offset", offset + 1);
-                        sessionStorage.setItem(
-                          "offset",
-                          (offset + 1).toString()
-                        );
-                        setlimitAndOffset({
-                          ...limitAndOffset,
-                          offset: offset + 1,
-                        });
-                      }
-                    }}
-                  >
-                    <BsFillCaretRightFill />
-                  </button>
-                </div>
-                <div>
-                  <label htmlFor="">Display </label>
-                  <select
-                    id=""
-                    className="bg-white focus:outline-none border-b "
-                    {...methods.register("limit")}
-                    onChange={(e) => {
-                      e.preventDefault();
-                      sessionStorage.setItem("limit", e.target.value);
-                      methods.setValue("limit", parseInt(e.target.value));
-                      methods.setValue("offset", 0);
-                      sessionStorage.setItem("offset", "0");
-                      setlimitAndOffset({
-                        offset: 0,
-                        limit: parseInt(e.target.value),
-                      });
-                    }}
-                  >
-                    <option value={5}>5 rows</option>
-                    <option value={10}>10 rows</option>
-                    <option value={15}>15 rows</option>
-                  </select>
-                </div>
+                <Pagination
+                  handlePageUp={handlePageUp}
+                  handlePageDown={handlePageDown}
+                  handlePageJump={handlePageJump}
+                  lastPage={Count}
+                />
+                {/* display rows */}
+                <DisplayRows
+                  handleChange={handleDisplayRows}
+                  TotalData={TotalData}
+                />
               </div>
             )}
           </div>
@@ -473,28 +483,24 @@ export default function Users() {
       </FormProvider>
       {/* for conformation  */}
       <Modal
+        id="DeleteUserModal"
         handleConform={handleDelete}
-        modalText={"Are you Sure , you want to delete ?"}
+        modalText={`Are you sure , You want to delete  ${DeleteUser.title}.  ${DeleteUser.firstName} ${DeleteUser.lastName} ?`}
         isFor={"warning"}
       />
-      {action !== "search" && (
-        <div className="flex justify-end">
-          <button
-            className="flex items-center space-x-2  text-primary "
-            onClick={(e) => {
-              e.preventDefault();
-              setaction("search");
-              sessionStorage.setItem("action", "search");
-            }}
-          >
-            <span>return to top</span> <MdClose className="text-lg" />
-          </button>
-        </div>
+      {action !== "search" && <ReturnToTop handleReturn={handleReturnToTop} />}
+      {action === "new" && (
+        <CreateUser viewCreatedData={HandleNewData} roles={selectRoles} />
       )}
-      {action === "new" && <CreateUser viewCreatedData={HandleNewData} />}
       {action === "edit" && (
-        <UpdateUser userId={ActionUserid} viewUpdatedData={HandleNewData} />
+        <UpdateUser
+          userId={ActionUserid}
+          viewUpdatedData={HandleNewData}
+          roles={selectRoles}
+        />
       )}
+      {/* Tooltips  */}
+      <Tooltip id={"UserSearchQueryLabel"} />
     </div>
   );
 }

@@ -43,7 +43,10 @@ const selectStyles = {
 };
 
 const SingleSelect = forwardRef(
-  ({ fieldname, required, options, isSearchable, ...rest }: any, ref) => {
+  (
+    { fieldname, required, options, isSearchable, isMulti, ...rest }: any,
+    ref
+  ) => {
     const methods = useFormContext();
     const registration = methods.register(fieldname);
     const { fieldState } = useController({ name: fieldname });
@@ -55,7 +58,7 @@ const SingleSelect = forwardRef(
 
     return (
       <>
-        <div className="flex mt-5 w-full space-x-2">
+        <div className="flex  w-full space-x-2">
           <div className="w-full">
             {/* <div className="capitalize">{fieldname} : </div> */}
             <Controller
@@ -66,6 +69,9 @@ const SingleSelect = forwardRef(
                   isSearchable={isSearchable}
                   {...field}
                   options={options}
+                  isMulti={
+                    isMulti !== undefined && isMulti === true ? true : false
+                  }
                   isClearable
                   styles={{
                     singleValue: (provided: any) => ({
@@ -114,7 +120,7 @@ export function AsyncSingleSelect({
   const { singleValue, ...restStyle } = selectStyles;
 
   return (
-    <>
+    <div>
       <div className="flex mt-5 w-full space-x-2">
         <div className="w-full">
           {/* <div className="capitalize">{fieldname} : </div> */}
@@ -160,7 +166,7 @@ export function AsyncSingleSelect({
         </div>
       </div>
       <div className="text-sm text-danger capitalize">{error?.message}</div>
-    </>
+    </div>
   );
 }
 
@@ -176,7 +182,6 @@ export function AsyncMultiSingleSelect({
   const registration = methods.register(fieldname);
   const { fieldState } = useController({ name: fieldname });
   let error = fieldState?.error;
-  const { placeholder, ...restSelectStyles } = selectStyles;
 
   useEffect(() => {
     const fieldvalue = sessionStorage.getItem(fieldname);
@@ -205,13 +210,7 @@ export function AsyncMultiSingleSelect({
                 loadOptions={loadOptions}
                 getOptionValue={(option: any) => option.value}
                 getOptionLabel={(option: any) => option.label}
-                styles={{
-                  placeholder: (provided: any) => ({
-                    ...provided,
-                    color: "#5885AF",
-                  }),
-                  ...restSelectStyles,
-                }}
+                styles={selectStyles}
                 noOptionsMessage={({ inputValue }) =>
                   !inputValue
                     ? "Start Typing to View Results"

@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
+import Fallback from "../common/Fallback";
 
 import Footer from "../common/Footer";
 import Header from "../common/Header";
 import Navbar from "../common/Navbar";
 import { LogUserContextProvider } from "../Login/LogUserContext";
+
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 export default function LandingPage() {
   const [Loguser, setLoguser] = useState(null);
@@ -13,49 +16,29 @@ export default function LandingPage() {
   const handleLoading = (value: boolean) => {
     setLoading(value);
   };
+
   return (
-    <div className="relative">
-      <div className="border flex flex-col h-screen overflow-auto ">
+    <div className="relative ">
+      <div
+        className="border flex flex-col h-screen overflow-auto scrollbar-none "
+        id="LandingPage"
+      >
         <LogUserContextProvider value={Loguser}>
           <Navbar />
           <Header />
-          <div className="my-5">
-            <Outlet context={{ setLoguser, handleLoading }} />
-          </div>
+          <TransitionGroup>
+            <CSSTransition timeout={800} classNames="page" unmountOnExit>
+              <div className="my-5 ">
+                <Outlet context={{ setLoguser, handleLoading }} />
+              </div>
+            </CSSTransition>
+          </TransitionGroup>
           <div className="border self-bottom mt-auto  py-4  bg-primary ">
             <Footer />
           </div>
         </LogUserContextProvider>
       </div>
-      <div
-        className={`bg-primary/[0.4] w-screen h-screen absolute top-0 left-0 right-0 bottom-0 ${
-          Loading === false ? "hidden" : "show"
-        }`}
-      >
-        <div className="w-fit h-fit mx-auto mt-[25%]  flex items-center ">
-          <svg
-            className="animate-spin -ml-1 mr-3 h-10 w-10 text-primary"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            ></circle>
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
-          <div className="text-5xl text-primary animate-pulse">loading...</div>
-        </div>
-      </div>
+      {Loading === true && <Fallback />}
     </div>
   );
 }

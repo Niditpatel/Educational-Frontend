@@ -4,21 +4,22 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 
-import { AsyncSingleSelect, SingleSelect } from "../../common/Fields/SelectField";
+import {
+  AsyncSingleSelect,
+  SingleSelect,
+} from "../../common/Fields/SelectField";
 import TextField from "../../common/Fields/TextField";
 
 import {
   GetTitles as GetTitlesService,
   GetInstitutes as GetInstitutesService,
 } from "../../../GetDataService";
-import { Get as GetDataService } from "../../../CurdService";
 
 import { CreateUserModelSchema } from "../../../models/CreateUserModel";
 import { Signup as RegisterService } from "../../../AuthService";
 
 export default function CreateUser(props: any) {
   const [Title, setTitle] = useState([]);
-  const [selectRoles, setselectRoles] = useState<any>([]);
   const [CahcheInstitute, setCahcheInstitute] = useState<any>([]);
 
   const [APIerror, setAPIerror] = useState("");
@@ -56,7 +57,6 @@ export default function CreateUser(props: any) {
     if (res.success === 0) {
       handleLoading(false);
       setAPIerror(res.message);
-      props.viewCreatedData(true);
     } else {
       setAPIsuccess(res.message);
       methods.reset();
@@ -87,15 +87,6 @@ export default function CreateUser(props: any) {
       });
       setTitle(titles);
     });
-
-    GetDataService("roles", token, {}).then((res) => {
-      if (res.success === 1) {
-        const options = res.data.map((val: any) => {
-          return { label: val, value: val };
-        });
-        setselectRoles([...options]);
-      }
-    });
   }, []);
 
   return (
@@ -111,15 +102,15 @@ export default function CreateUser(props: any) {
       <FormProvider {...methods}>
         <form action="" onSubmit={methods.handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
-            <div>
+            <div className="w-full mt-5">
               <SingleSelect
                 fieldname="role"
                 placeholder="Select Role"
                 required={true}
-                options={selectRoles}
+                options={props.roles}
               />
             </div>
-            <div>
+            <div className="w-full mt-5">
               <SingleSelect
                 fieldname="title"
                 placeholder="Select Title"

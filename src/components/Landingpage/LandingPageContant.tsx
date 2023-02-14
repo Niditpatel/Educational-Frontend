@@ -5,7 +5,25 @@ import eduaction2 from "../../Images/education2.jpg";
 import education3 from "../../Images/education3.jpg";
 import education4 from "../../Images/education4.jpg";
 
+import { useEffect } from "react";
+import { useOutletContext } from "react-router-dom";
+
+const Ping = () => {
+  return (
+    <div className="absolute -top-1 -right-0.5  bg-primary  rounded-full">
+      <div className="h-3 w-3 bg-primary animate-ping rounded-full"></div>
+    </div>
+  );
+};
+
 export default function LandingPageContent() {
+  const { handleLoading } = useOutletContext<any>();
+
+  useEffect(() => {
+    handleLoading(true);
+    return handleLoading(false);
+  }, []);
+
   return (
     <>
       {/* for small devices  */}
@@ -32,17 +50,21 @@ export default function LandingPageContent() {
           </div>
         </div>
         <div className="flex mt-5  text-2xl space-y-4 flex-col md:hidden text-primary">
-          <div className="border border-secondary bg-light2 px-3 py-2  shadow-xl shadow-secondary">
+          <div className="relative border border-secondary bg-light2 px-3 py-2  shadow-xl shadow-secondary">
             check latest features
+            <Ping />
           </div>
-          <div className="border border-secondary bg-light2 px-3 py-2  shadow-xl shadow-secondary">
+          <div className="relative border border-secondary bg-light2 px-3 py-2  shadow-xl shadow-secondary">
             view latest bloges
+            <Ping />
           </div>
-          <div className="border border-secondary bg-light2 px-3 py-2  shadow-xl shadow-secondary">
+          <div className="relative border border-secondary bg-light2 px-3 py-2  shadow-xl shadow-secondary">
             view latest books
+            <Ping />
           </div>
-          <div className="border border-secondary bg-light2 px-3 py-2  shadow-xl shadow-secondary">
+          <div className="relative border border-secondary bg-light2 px-3 py-2  shadow-xl shadow-secondary">
             view latest magagine
+            <Ping />
           </div>
         </div>
       </div>
@@ -55,24 +77,26 @@ export default function LandingPageContent() {
               <img src={education1} className="w-full h-full" alt="" />
               <div className="absolute inset-0 items-center justify-center hover:bg-primary/[0.7] ">
                 <div className="py-2 w-max group-hover:w-full  bg-white px-1 mx-auto mt-[25%]">
-                  <p className="uppercase text-xl tracking-widest semibold text-center ">
-                    new featurs
-                  </p>
+                  <button className="uppercase w-full text-xl tracking-widest semibold text-center ">
+                    <span>new featurs</span>
+                  </button>
                 </div>
               </div>
+              <Ping />
             </div>
             <div className=" relative group ">
               <img src={eduaction2} className="w-full h-full" alt="" />
               <div className="absolute inset-0 items-center justify-center hover:bg-primary/[0.7] ">
                 <div className="py-2 w-max group-hover:w-full  bg-white px-1 mx-auto mt-[25%]">
-                  <p className="uppercase text-xl tracking-widest semibold text-center ">
-                    latest blogs
-                  </p>
+                  <button className="uppercase w-full text-xl tracking-widest semibold text-center ">
+                    <span> latest blogs</span>
+                  </button>
                 </div>
               </div>
+              <Ping />
             </div>
           </div>
-          <div className="basis-1/3 my-auto mx-auto ">
+          <div className="basis-1/3 my-auto mx-auto  ">
             <div className=" flex flex-warp flex-col items-center justify-center  text-2xl uppercase text-center italic  lg:text-5xl ">
               <p className="my-4">one</p>
               <p className="my-2">education</p>
@@ -83,21 +107,23 @@ export default function LandingPageContent() {
               <img src={education3} className="w-full h-full" alt="" />
               <div className="absolute inset-0 items-center justify-center hover:bg-primary/[0.7] ">
                 <div className="py-2 w-max group-hover:w-full  bg-white px-1 mx-auto mt-[25%]">
-                  <p className="uppercase text-xl tracking-widest semibold text-center ">
-                    latest books
-                  </p>
+                  <button className="uppercase w-full text-xl tracking-widest semibold text-center ">
+                    <span>latest books</span>
+                  </button>
                 </div>
               </div>
+              <Ping />
             </div>
             <div className="relative group ">
               <img src={education4} className="w-full h-full" alt="" />
               <div className="absolute inset-0 items-center justify-center hover:bg-primary/[0.7] ">
                 <div className="py-2 w-max group-hover:w-full  bg-white px-1 mx-auto mt-[25%]">
-                  <p className="uppercase text-xl tracking-widest semibold text-center ">
-                    view magagine
-                  </p>
+                  <button className="uppercase w-full text-xl tracking-widest semibold text-center  ">
+                    <span>view magagine</span>
+                  </button>
                 </div>
               </div>
+              <Ping />
             </div>
           </div>
         </div>

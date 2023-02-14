@@ -1,0 +1,1 @@
+{"version":3,"file":"static/js/539.331e1f42.chunk.js","mappings":"2KAAe,SAASA,IACtB,OACE,+BACE,yBAAK,oBAGX,C","sources":["components/Admin/Assets/Assets.tsx"],"sourcesContent":["export default function Assets() {\n  return (\n    <>\n      <div>this is assets</div>\n    </>\n  );\n}\n"],"names":["Assets"],"sourceRoot":""}

@@ -22,7 +22,7 @@ export default function Footer() {
           one Education <br />
           2nd floor <br />
           ekyarth <br />
-          charodi <br />
+          chharodi <br />
           ahemadabad
           <br />
           gujarat, india
@@ -35,7 +35,7 @@ export default function Footer() {
           anti-slavery policy
         </div>
         <div className="capitalize border-t pt-2 border-higher2 md:border-none ">
-          registered in indai no. 99009900 <br />
+          registered in india no. 99009900 <br />
           request help <br />
           contact us
           <br />
