@@ -2,18 +2,18 @@ import { CiSearch } from "react-icons/ci";
 import { ImBooks } from "react-icons/im";
 
 import { useRef } from "react";
+// import { Logotext } from "./LogoText/Logotext";
 
 export default function Header() {
-
   const SearchButtonRef = useRef<HTMLButtonElement>(null);
-  
+
   return (
     <div className="container px-2">
       <div className="mt-8 flex justify-between flex-col md:flex-row space-y-4 md:space-y-0">
         <div className="flex items-center text-xl space-x-1 ">
-          <ImBooks className="text-primary" />
-          <p className=" ">
-            One<span className="text-primary font-semibold">E</span>ducation
+          <ImBooks className="text-primary animate-pulse" />
+          <p className="">
+            One<span className="font-bold text-primary">E</span>ducation
           </p>
         </div>
         <div className="flex flex-col space-y-4  md:space-x-8 md:flex-row">

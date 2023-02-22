@@ -10,6 +10,7 @@ import { IoExitOutline } from "react-icons/io5";
 import { AiOutlineUser } from "react-icons/ai";
 import { RxDashboard } from "react-icons/rx";
 import Modal from "./Modal/Modal";
+// import { Logotext } from "./LogoText/Logotext";
 
 export default function Navbar() {
   const [LoggedUser, setLoggedUser] = useState<any>();
@@ -35,11 +36,11 @@ export default function Navbar() {
     <>
       <div className="border-b  bg-primary">
         <nav className="relative w-full flex flex-wrap  items-center justify-between  text-white navbar navbar-expand-2xl  ">
-          <div className="container w-full  flex flex-wrap items-center justify-between px-6 ">
+          <div className="container w-full  flex flex-wrap items-center justify-between pr-6 ">
             <Link to={"/"}>
               <div className="flex">
                 <img src={point} style={{ height: "50px" }} alt="logo-part" />
-                <span className="flex uppercase items-center text-xl text-white ">
+                <span className="flex uppercase items-center text-xl  ">
                   on
                   <span className="text-light1 font-semibold">e</span>
                   ducation

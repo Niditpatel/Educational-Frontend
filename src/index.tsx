@@ -13,7 +13,6 @@ import {
 } from "./RouteGuard";
 import ErrorPage from "./components/common/ErrorPage/ErrorPage";
 import Profile from "./components/Profile.tsx/Profile";
-import { Test } from "./Test/Test";
 const LandingPage = lazy(() => import("./components/Landingpage/LandingPage"));
 const LandingPageContent = lazy(
   () => import("./components/Landingpage/LandingPageContant")
@@ -51,16 +50,6 @@ root.render(
             </Suspense>
           }
         >
-          <Route
-            path="/test"
-            element={
-              <Suspense fallback={<Fallback />}>
-                <Test />
-              </Suspense>
-            }
-          >
-            {" "}
-          </Route>
           <Route
             path="/"
             element={
